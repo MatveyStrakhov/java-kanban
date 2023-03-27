@@ -1,8 +1,10 @@
 import java.util.ArrayList;
+
 public class Epic extends Task {
     ArrayList<Integer> mySubtasksID = new ArrayList<>();
+
     public Epic(String name, String description) {
-        super(name, description,"NEW" );
+        super(name, description, "NEW");
     }
 
     @Override

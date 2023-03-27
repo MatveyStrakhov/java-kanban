@@ -21,8 +21,6 @@ public class Task {
     }
 
 
-
-
     public String getName() {
         return name;
     }
