@@ -26,6 +26,8 @@ public class Main {
         Subtask subtask4 = new Subtask("e", "e", 2, "NEW");
         taskManager.updateSubtask(subtask4, 5);
         taskManager.printEpicByID(2);
+        taskManager.removeAllSubtasks();
+        taskManager.printAllEpics();
         System.out.println("Поехали!");
     }
 }
