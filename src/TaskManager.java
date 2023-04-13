@@ -1,187 +1,49 @@
-import java.util.HashMap;
+import java.util.List;
 
-public class TaskManager {
-    int rawID = 0;
-    HashMap<Integer, Task> tasks = new HashMap<>();
-    HashMap<Integer, Epic> epics = new HashMap<>();
-    HashMap<Integer, Subtask> subtasks = new HashMap<>();
+interface TaskManager {
+    void addNewTask(Task task);
 
-    void addNewTask(Task task) {
-        task.setTaskID(generateID());
-        tasks.put(task.getTaskID(), task);
-    }
+    void addNewSubtask(Subtask subtask, int epicID);
 
-    void addNewSubtask(Subtask subtask, int epicID) {
-        if (epics.containsKey(epicID)) {
-            subtask.setTaskID(generateID());
-            subtask.setTaskID(subtask.getTaskID());
-            subtasks.put(subtask.getTaskID(), subtask);
-            epics.get(epicID).getMySubtasksID().add(subtask.getTaskID());
-            checkStatusOfEpic(epics.get(epicID));
-        }
-    }
+    void addNewEpic(Epic epic);
 
-    void addNewEpic(Epic epic) {
-        epic.setTaskID(generateID());
-        epics.put(epic.getTaskID(), epic);
-    }
+    void checkStatusOfEpic(Epic epic);
 
-    private void checkStatusOfEpic(Epic epic) {
-        boolean newTask = false;
-        boolean inProgress = false;
-        boolean done = false;
-        if (!epic.getMySubtasksID().isEmpty()) {
-            for (Integer subtaskID : epic.getMySubtasksID()) {
-                if (subtasks.get(subtaskID).getStatus().equals("IN_PROGRESS")) {
-                    inProgress = true;
-                } else if (subtasks.get(subtaskID).getStatus().equals("DONE")) {
-                    done = true;
-                } else if (subtasks.get(subtaskID).getStatus().equals("NEW")) {
-                    newTask = true;
-                }
+    void printAllTasks();
 
-                if (inProgress) {
-                    epic.setStatus("IN_PROGRESS");
-                } else if (!inProgress && done && !newTask) {
-                    epic.setStatus("DONE");
-                } else {
-                    epic.setStatus("NEW");
-                }
-            }
-        } else {
-            epic.setStatus("NEW");
-        }
-    }
+    void printAllEpics();
 
-    void printAllTasks() {
-        for (Task task : tasks.values()) {
-            System.out.println(task.toString());
-        }
-    }
+    void printAllSubtasks();
 
-    void printAllEpics() {
-        for (Epic epic : epics.values()) {
-            System.out.println(epic.toString());
-        }
-    }
+    void printSubtasksByEpicID(int epicID);
 
-    void printAllSubtasks() {
-        for (Subtask subtask : subtasks.values()) {
-            System.out.println(subtask.toString());
-        }
-    }
+    void removeTaskByID(int taskID);
 
-    void printSubtasksByEpicID(int epicID) {
-        for (Integer subtaskID : epics.get(epicID).getMySubtasksID()) {
-            System.out.println(subtasks.get(subtaskID).toString());
-        }
-    }
+    void removeEpicByID(int epicID);
 
-    void removeTaskByID(int taskID) {
-        if (tasks.containsKey(taskID)) {
-            tasks.remove(taskID);
-        }
-    }
+    void removeSubtaskByID(int subtaskID);
 
-    void removeEpicByID(int epicID) {
-        if (epics.containsKey(epicID)) {
-            epics.remove(epicID);
-            for (Subtask subtask : subtasks.values()) {
-                if (subtask.getEpicID() == epicID) {
-                    subtasks.remove(subtask.getTaskID());
-                }
-            }
-        }
-    }
+    void removeAllTasks();
 
-    void removeSubtaskByID(int subtaskID) {
-        if (subtasks.containsKey(subtaskID)) {
-            int epicID = subtasks.get(subtaskID).getEpicID();
-            for (int i = 0; i < epics.get(epicID).getMySubtasksID().size(); i++) {
-                if (epics.get(epicID).getMySubtasksID().get(i) == subtaskID) {
-                    epics.get(epicID).removeElementFromMySubtasksID(i);
-                }
-            }
-            subtasks.remove(subtaskID);
-            checkStatusOfEpic(epics.get(epicID));
-        }
-    }
+    void removeAllEpics();
 
-    void removeAllTasks() {
-        tasks.clear();
-    }
+    void removeAllSubtasks();
 
-    void removeAllEpics() {
-        epics.clear();
-        subtasks.clear();
-    }
+    void updateTask(Task task, int taskID);
 
-    void removeAllSubtasks() {
-        subtasks.clear();
-        for (Epic epic : epics.values()) {
-            epic.clearMySubtaskID();
-            checkStatusOfEpic(epic);
-        }
-    }
+    void updateSubtask(Subtask subtask, int subtaskID);
 
-    void updateTask(Task task, int taskID) {
-        task.setTaskID(taskID);
-        if (tasks.containsKey(taskID)) {
-            tasks.put(task.getTaskID(), task);
-        }
-    }
+    void updateEpic(Epic epic, int epicID);
 
-    void updateSubtask(Subtask subtask, int subtaskID) {
-        subtask.setTaskID(subtaskID);
-        if (subtasks.containsKey(subtask.getTaskID())) {
-            subtasks.put(subtask.getTaskID(), subtask);
-            checkStatusOfEpic(epics.get(subtask.getEpicID()));
-        }
-    }
+    Task returnTaskByID(int taskID);
+    Epic returnEpicByID(int taskID);
+    Subtask returnSubtaskByID(int taskID);
 
-    void updateEpic(Epic epic, int epicID) {
-        epic.setTaskID(epicID);
-        if (epics.containsKey(epic.getTaskID())) {
-            for (Integer subtaskID : epics.get(epic.getTaskID()).getMySubtasksID()) {
-                epic.getMySubtasksID().add(subtaskID);
-            }
-            epics.put(epic.getTaskID(), epic);
-            checkStatusOfEpic(epic);
-        }
-    }
+    void printTaskByID(int taskID);
 
-    Task returnTaskByID(int taskID) {
-        return tasks.getOrDefault(taskID, null);
-    }
+    void printEpicByID(int taskID);
 
-    Epic returnEpicByID(int taskID) {
-        return epics.getOrDefault(taskID, null);
-    }
-
-    Subtask returnSubtaskByID(int taskID) {
-        return subtasks.getOrDefault(taskID, null);
-    }
-
-    void printTaskByID(int taskID) {
-        if (tasks.containsKey(taskID)) {
-            System.out.println(returnTaskByID(taskID).toString());
-        }
-    }
-
-    void printEpicByID(int taskID) {
-        if (epics.containsKey(taskID)) {
-            System.out.println(returnEpicByID(taskID).toString());
-        }
-    }
-
-    void printSubtaskByID(int subtaskID) {
-        if (subtasks.containsKey(subtaskID)) {
-            System.out.println(returnSubtaskByID(subtaskID).toString());
-        }
-    }
-
-
-    int generateID() {
-        return rawID++;
-    }
+    void printSubtaskByID(int subtaskID);
+    void printHistory();
+    int generateID();
 }
