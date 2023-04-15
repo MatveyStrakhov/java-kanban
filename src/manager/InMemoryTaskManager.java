@@ -229,17 +229,16 @@ class InMemoryTaskManager implements TaskManager {
         }
     }
 
-
-
-    /*public int generateID() {
-        return rawID++;
-    }*/
-
     @Override
     public void printHistory() {
         for (Task task : historyManager.getHistory()) {
             System.out.println(task.toString());
         }
+    }
+
+    @Override
+    int generateID() {
+        return rawID++;
     }
 
     @Override
