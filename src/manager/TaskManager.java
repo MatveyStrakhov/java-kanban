@@ -51,6 +51,6 @@ public interface TaskManager {
 
     void printSubtaskByID(int subtaskID);
     void printHistory();
-    int generateID();
+
     List<Task> getHistory();
 }

@@ -236,8 +236,8 @@ class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    @Override
-    int generateID() {
+
+    private int generateID() {
         return rawID++;
     }
 
