@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
 class InMemoryTaskManager implements TaskManager {
     private int rawID = 0;
     private HashMap<Integer, Task> tasks = new HashMap<>();
@@ -99,6 +100,7 @@ class InMemoryTaskManager implements TaskManager {
     public void removeTaskByID(int taskID) {
         if (tasks.containsKey(taskID)) {
             tasks.remove(taskID);
+            historyManager.historyRemove(taskID);
         }
     }
 
@@ -106,11 +108,18 @@ class InMemoryTaskManager implements TaskManager {
     public void removeEpicByID(int epicID) {
         if (epics.containsKey(epicID)) {
             epics.remove(epicID);
+            historyManager.historyRemove(epicID);
+            List<Integer> idForRemoval = new ArrayList<>();
             for (Subtask subtask : subtasks.values()) {
                 if (subtask.getEpicID() == epicID) {
-                    subtasks.remove(subtask.getTaskID());
+                    idForRemoval.add(subtask.getTaskID());
+                    historyManager.historyRemove(subtask.getTaskID());
                 }
             }
+            for (int id : idForRemoval) {
+                subtasks.remove(id);
+            }
+            idForRemoval.clear();
         }
     }
 
@@ -124,6 +133,7 @@ class InMemoryTaskManager implements TaskManager {
                 }
             }
             subtasks.remove(subtaskID);
+            historyManager.historyRemove(subtaskID);
             checkStatusOfEpic(epics.get(epicID));
         }
     }
