@@ -33,5 +33,8 @@ public class Main {
         taskManager.removeEpicByID(3);
         System.out.println("History");
         taskManager.printHistory();
+        taskManager.removeAllEpics();
+        System.out.println("History");
+        taskManager.printHistory();
     }
 }
