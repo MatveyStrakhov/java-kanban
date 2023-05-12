@@ -1,5 +1,6 @@
 package manager;
 
+import model.Node;
 import model.Task;
 
 import java.util.ArrayList;
@@ -21,15 +22,15 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void historyRemove(int taskID) {
         if (historyMap.containsKey(taskID)) {
-            if (historyMap.get(taskID).next == null) {
-                tail = tail.prev;
-                historyMap.get(taskID).prev.next = null;
-            } else if (historyMap.get(taskID).prev == null) {
-                head = head.next;
-                historyMap.get(taskID).next.prev = null;
+            if (historyMap.get(taskID).getNext() == null) {
+                tail = tail.getPrev();
+                historyMap.get(taskID).getPrev().setNext(null);
+            } else if (historyMap.get(taskID).getPrev() == null) {
+                head = head.getNext();
+                historyMap.get(taskID).getNext().setPrev(null);
             } else {
-                historyMap.get(taskID).prev.next = historyMap.get(taskID).next.prev;
-                historyMap.get(taskID).next.prev = historyMap.get(taskID).prev.next;
+                historyMap.get(taskID).getPrev().setNext(historyMap.get(taskID).getNext().getPrev());
+                historyMap.get(taskID).getNext().setPrev(historyMap.get(taskID).getPrev().getNext());
             }
             historyMap.remove(taskID);
         }
@@ -42,31 +43,31 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
 
-    public Node<Task> linkLast(Task task) {
+    private Node<Task> linkLast(Task task) {
         if (getTasks().isEmpty()) {
             head = new Node<>(task, null, null);
             return head;
         } else if (getTasks().size() == 1) {
             tail = new Node<>(task, head, null);
-            tail.prev.next = tail;
+            tail.getPrev().setNext(tail);
             return tail;
         } else {
             Node<Task> newTail = new Node<>(task, tail, null);
-            newTail.prev.data = tail.data;
-            newTail.prev.next = newTail;
+            newTail.getPrev().setData(tail.getData());
+            newTail.getPrev().setNext(newTail);
             tail = newTail;
             return newTail;
         }
     }
 
-    public ArrayList<Task> getTasks() {
+    private ArrayList<Task> getTasks() {
         ArrayList<Task> tasks = new ArrayList<>();
         Node<Task> currNode = head;
         while (currNode != null) {
             if (historyMap.containsValue(currNode)) {
-                tasks.add(currNode.data);
+                tasks.add(currNode.getData());
             }
-            currNode = currNode.next;
+            currNode = currNode.getNext();
         }
         return tasks;
     }
