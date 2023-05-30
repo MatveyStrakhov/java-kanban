@@ -71,5 +71,15 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
         return tasks;
     }
+    @Override
+    public String toString(){
+        StringBuilder history = new StringBuilder();
+        for(Task task: getHistory()){
+            history.append(",").append(task.getTaskID());
+        }
+        if(history.length()!=0){
+        history.deleteCharAt(0);}
+        return history.toString();
+    }
 }
 

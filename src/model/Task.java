@@ -5,11 +5,19 @@ public class Task {
     protected String description;
     protected TaskStatus status; // NEW IN_PROGRESS DONE;
     protected int taskID;
+    protected TaskType type;
 
+    public Task(String name, String description, TaskStatus status, TaskType type) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.type = type;
+    }
     public Task(String name, String description, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.status = status;
+        this.type = TaskType.TASK;
     }
 
     @Override
@@ -37,4 +45,16 @@ public class Task {
     public void setTaskID(int taskID) {
         this.taskID = taskID;
     }
+
+    public TaskType getTaskType() {
+        return type;
+    }
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
 }

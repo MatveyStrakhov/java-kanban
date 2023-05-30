@@ -1,3 +1,5 @@
+import manager.FileBackedTasksManager;
+import manager.InMemoryTaskManager;
 import manager.Managers;
 import manager.TaskManager;
 import model.*;
@@ -33,8 +35,10 @@ public class Main {
         taskManager.removeEpicByID(3);
         System.out.println("History");
         taskManager.printHistory();
-        taskManager.removeAllEpics();
+        //taskManager.removeAllEpics();
         System.out.println("History");
         taskManager.printHistory();
+        InMemoryTaskManager manager = new FileBackedTasksManager("src/lastSessionSaved.csv");
+        manager.addNewTask(task0);
     }
 }
