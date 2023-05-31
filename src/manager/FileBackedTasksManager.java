@@ -1,5 +1,6 @@
 package manager;
 
+import exception.ManagerSaveException;
 import model.*;
 
 import java.io.*;
@@ -17,32 +18,27 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
             bw.write("id,type,name,status,description,epic");
             bw.newLine();
-            bw.flush();
             for (Task task : tasks.values()) {
                 bw.write(taskToString(task));
-                bw.flush();
                 bw.newLine();
 
             }
             for (Epic task : epics.values()) {
                 bw.write(taskToString(task));
-                bw.flush();
                 bw.newLine();
             }
             for (Subtask task : subtasks.values()) {
                 bw.write(taskToString(task));
-                bw.flush();
                 bw.newLine();
             }
             bw.newLine();
-            bw.flush();
             bw.write(historyToString(historyManager));
         } catch (IOException e) {
             throw new ManagerSaveException("Error while saving");
         }
     }
 
-    static String historyToString(HistoryManager manager) {
+    private static String historyToString(HistoryManager manager) {
         return manager.toString();
     }
 
@@ -98,7 +94,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    static FileBackedTasksManager loadFromFile(String path) {
+    public static FileBackedTasksManager loadFromFile(String path) throws ManagerSaveException {
         FileBackedTasksManager manager = new FileBackedTasksManager(path);
         try (BufferedReader bw = new BufferedReader(new FileReader(path))) {
             while (bw.ready()) {
@@ -136,7 +132,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
             }
         } catch (IOException e) {
-            System.out.println("File not found");
+            throw new ManagerSaveException("File not found");
         }
         return manager;
     }
@@ -154,157 +150,96 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public void addNewSubtask(Subtask subtask, int epicId) {
         super.addNewSubtask(subtask, epicId);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-        }
-
+        save();
     }
 
     @Override
     public void addNewTask(Task task) {
         super.addNewTask(task);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void addNewEpic(Epic task) {
         super.addNewEpic(task);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void removeTaskByID(int id) {
         super.removeTaskByID(id);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void removeSubtaskByID(int id) {
         super.removeSubtaskByID(id);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void removeEpicByID(int id) {
         super.removeEpicByID(id);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void printTaskByID(int id) {
         super.printTaskByID(id);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void printSubtaskByID(int id) {
         super.printSubtaskByID(id);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void printEpicByID(int id) {
         super.printEpicByID(id);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void updateTask(Task task, int id) {
         super.updateTask(task, id);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void updateEpic(Epic task, int id) {
         super.updateEpic(task, id);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void updateSubtask(Subtask task, int id) {
         super.updateSubtask(task, id);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void removeAllSubtasks() {
         super.removeAllSubtasks();
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void removeAllTasks() {
         super.removeAllTasks();
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-        }
+        save();
     }
 
     @Override
     public void removeAllEpics() {
         super.removeAllEpics();
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-        }
+        save();
     }
 
 
     public static void main(String[] args) {
-        FileBackedTasksManager fileManager1 = new FileBackedTasksManager("src/lastSessionSaved.csv");
+        FileBackedTasksManager fileManager1 = (FileBackedTasksManager) Managers.getDefault();
         Task task0 = new Task("a", "a", TaskStatus.NEW);
         Task task1 = new Task("b", "b", TaskStatus.NEW);
         Epic epic2 = new Epic("c", "c");
