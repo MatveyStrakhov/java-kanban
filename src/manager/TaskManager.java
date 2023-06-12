@@ -20,7 +20,6 @@ public interface TaskManager {
     void printAllEpics();
 
     void printAllSubtasks();
-
     void printSubtasksByEpicID(int epicID);
 
     void removeTaskByID(int taskID);
@@ -53,4 +52,10 @@ public interface TaskManager {
     void printHistory();
 
     List<Task> getHistory();
+
+    List<Task> returnAllTasks();
+
+    List<Task> returnAllEpics();
+
+    List<Task> returnAllSubtasks();
 }

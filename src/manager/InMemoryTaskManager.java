@@ -5,10 +5,8 @@ import model.Subtask;
 import model.Task;
 import model.TaskStatus;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class InMemoryTaskManager implements TaskManager {
@@ -266,6 +264,31 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
+    }
+
+    @Override
+    public List<Task> returnAllTasks() {
+        if (tasks.isEmpty()){
+            return Collections.emptyList();
+        }
+        else{
+        return new ArrayList<>(tasks.values());}
+    }
+    @Override
+    public List<Task> returnAllEpics() {
+        if (epics.isEmpty()){
+            return Collections.emptyList();
+        }
+        else{
+            return new ArrayList<>(epics.values());}
+    }
+    @Override
+    public List<Task> returnAllSubtasks() {
+        if (subtasks.isEmpty()){
+            return Collections.emptyList();
+        }
+        else{
+            return new ArrayList<>(subtasks.values());}
     }
 
 }
