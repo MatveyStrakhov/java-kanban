@@ -56,5 +56,9 @@ public class Task {
     public String getDescription() {
         return description;
     }
-
+//    public boolean equals(Task task){
+//        return this.name.equals(task.getName())&&this.description.equals(task.getDescription())&&
+//                this.taskID==task.getTaskID()&&this.type.equals(getTaskType())&&this.status.equals(task.getStatus());
+//
+//}
 }

@@ -7,55 +7,55 @@ import model.Task;
 import java.util.List;
 
 public interface TaskManager {
-    void addNewTask(Task task);
+    void addNewTask(Task task); //done
 
-    void addNewSubtask(Subtask subtask, int epicID);
+    void addNewSubtask(Subtask subtask, int epicID); //done
 
-    void addNewEpic(Epic epic);
+    void addNewEpic(Epic epic); //done
 
     void checkStatusOfEpic(Epic epic);
 
-    void printAllTasks();
+    void printAllTasks(); //done
 
-    void printAllEpics();
+    void printAllEpics(); //done
 
-    void printAllSubtasks();
-    void printSubtasksByEpicID(int epicID);
+    void printAllSubtasks(); //done
+    void printSubtasksByEpicID(int epicID); //done
 
-    void removeTaskByID(int taskID);
+    void removeTaskByID(int taskID); //done
 
-    void removeEpicByID(int epicID);
+    void removeEpicByID(int epicID); //done
 
-    void removeSubtaskByID(int subtaskID);
+    void removeSubtaskByID(int subtaskID); //done
 
-    void removeAllTasks();
+    void removeAllTasks();//done
 
-    void removeAllEpics();
+    void removeAllEpics();//done
 
-    void removeAllSubtasks();
+    void removeAllSubtasks();//done
 
-    void updateTask(Task task, int taskID);
+    void updateTask(Task task, int taskID); //done
 
-    void updateSubtask(Subtask subtask, int subtaskID);
+    void updateSubtask(Subtask subtask, int subtaskID);  //done
 
-    void updateEpic(Epic epic, int epicID);
+    void updateEpic(Epic epic, int epicID); //done
 
-    Task returnTaskByID(int taskID);
-    Epic returnEpicByID(int taskID);
-    Subtask returnSubtaskByID(int taskID);
+    Task returnTaskByID(int taskID); //done
+    Epic returnEpicByID(int taskID); //done
+    Subtask returnSubtaskByID(int taskID); //done
 
-    void printTaskByID(int taskID);
+    void printTaskByID(int taskID); //done
 
-    void printEpicByID(int taskID);
+    void printEpicByID(int taskID); //done
 
-    void printSubtaskByID(int subtaskID);
-    void printHistory();
+    void printSubtaskByID(int subtaskID); //done
+    void printHistory(); //done
 
-    List<Task> getHistory();
+    List<Task> getHistory(); //done
 
-    List<Task> returnAllTasks();
+    List<Task> returnAllTasks(); //done
 
-    List<Task> returnAllEpics();
+    List<Task> returnAllEpics(); //done
 
-    List<Task> returnAllSubtasks();
+    List<Task> returnAllSubtasks(); //done
 }
