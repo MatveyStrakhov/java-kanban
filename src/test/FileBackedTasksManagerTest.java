@@ -28,7 +28,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         FileBackedTasksManager prefilledTaskManager = loadFromFile("src/test/prefilledLastSessionSavedTest.csv");
         assertEquals(Collections.emptyList(),prefilledTaskManager.returnAllTasks());
         assertEquals(Collections.emptyList(),prefilledTaskManager.returnAllSubtasks());
-        assertEquals(Collections.emptyList(),prefilledTaskManager.returnAllEpics());
+        assertNotEquals(Collections.emptyList(),prefilledTaskManager.returnAllEpics());
         assertEquals(1,prefilledTaskManager.getHistory().size());
     }
 

@@ -71,7 +71,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 Epic epic = new Epic(line[2], line[4]);
                 epic.setTaskID(Integer.parseInt(line[0]));
                 epic.setStatus(TaskStatus.valueOf(line[3]));
-                if (line[5] != null) {
+                if (line.length > 5) {
                     ArrayList<Integer> subtasksOfEpic = new ArrayList<>();
                     String[] ids = line[5].split(":");
                     for (int i = 0; i < ids.length; i++) {
@@ -118,7 +118,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
             }
             String history = bw.readLine();
-            if (!history.isBlank()) {
+            if (!(history == null) &&!history.isBlank()) {
                 for (int taskId : historyFromString(history)) {
                     if (manager.tasks.containsKey(taskId)) {
                         manager.historyManager.historyAdd(manager.tasks.get(taskId));
