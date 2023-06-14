@@ -1,6 +1,8 @@
 package manager;
 
 import model.*;
+
+import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -9,7 +11,12 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, Task> tasks = new HashMap<>();
     protected final Map<Integer, Epic> epics = new HashMap<>();
     protected final Map<Integer, Subtask> subtasks = new HashMap<>();
-    protected TreeSet<Task> sortedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime,Comparator.nullsLast(Comparator.naturalOrder())));
+    //protected SortedSet<Task> sortedTasks = new TreeSet<Task>(Comparator.comparing(Task::getStartTime,Comparator.nullsLast(Comparator.naturalOrder())));
+    protected SortedSet<Task> sortedTasks = new TreeSet<>((o1, o2) -> {if (o1.getStartTime()!=null&&o2.getStartTime()!=null)
+        if (o1.getStartTime().equals(o2.getStartTime())) {
+            return 1;
+        }else
+        return o1.getStartTime().compareTo(o2.getStartTime()); else if (o1.getStartTime()==null){return 1;}else{return-1;}});
     protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
@@ -35,7 +42,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void addNewEpic(Epic epic) {
         epic.setTaskID(generateID());
         epics.put(epic.getTaskID(), epic);
-        sortedTasks.add(epic);// in the end order is irrelevant
+        sortedTasks.add(epic);
     }
     @Override
     public List<Task> getPrioritizedTasks(){
@@ -48,7 +55,6 @@ public class InMemoryTaskManager implements TaskManager {
         boolean done = false;
         if(epic.getStartTime(subtasks).isPresent()){
             epic.setStartTime(epic.getStartTime(subtasks).get());
-            sortedTasks.add(epic);
         }
         epic.setDuration(epic.getDuration(subtasks));
         if(epic.getEndTime()!=null){epic.setEndTime(epic.getEndTime());}

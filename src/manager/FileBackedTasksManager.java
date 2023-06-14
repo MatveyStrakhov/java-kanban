@@ -266,7 +266,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         Subtask subtask5 = new Subtask("f", "f", 2, TaskStatus.IN_PROGRESS,LocalDateTime.now(),10);
         TimeUnit.SECONDS.sleep(1);
         Subtask subtask6 = new Subtask("g", "g", 2, TaskStatus.NEW,LocalDateTime.now(),10);
-        TimeUnit.SECONDS.sleep(1);
         fileManager1.addNewTask(task0);
         fileManager1.addNewTask(task1);
         fileManager1.addNewEpic(epic2);

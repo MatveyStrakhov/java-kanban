@@ -22,12 +22,14 @@ public class Task {
         this.status = status;
         this.type = type;
     }
+
     public Task(String name, String description, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.status = status;
         this.type = TaskType.TASK;
     }
+
     public Task(String name, String description, TaskStatus status, TaskType type, LocalDateTime startTime, int duration) {
         this.name = name;
         this.description = description;
@@ -43,7 +45,7 @@ public class Task {
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status='" + status + '\'' +
-                ", taskID=" + taskID  + '\'' + ", startTime=" + startTime + '\'' + ", duration=" + getDuration().toString()+
+                ", taskID=" + taskID + '\'' + ", startTime=" + startTime + '\'' + ", duration=" + getDuration().toString() +
                 '}';
     }
 
@@ -86,6 +88,7 @@ public class Task {
     public TaskType getTaskType() {
         return type;
     }
+
     public String getName() {
         return name;
     }
@@ -93,10 +96,13 @@ public class Task {
     public String getDescription() {
         return description;
     }
-    public LocalDateTime getEndTime(){
-        if(startTime!=null){
-        return startTime.plusMinutes(duration.toMinutes());}
-        else {return null;}
+
+    public LocalDateTime getEndTime() {
+        if (startTime != null) {
+            return startTime.plusMinutes(duration.toMinutes());
+        } else {
+            return null;
+        }
     }
 //    @Override
 //    public boolean equals(Object o) {
