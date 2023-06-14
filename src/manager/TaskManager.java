@@ -59,4 +59,5 @@ public interface TaskManager {
     List<Task> returnAllEpics(); //done
 
     List<Task> returnAllSubtasks(); //done
+    List<Task> getPrioritizedTasks();
 }

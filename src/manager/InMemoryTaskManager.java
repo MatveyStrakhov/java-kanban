@@ -1,11 +1,6 @@
 package manager;
 
-import model.Epic;
-import model.Subtask;
-import model.Task;
-import model.TaskStatus;
-
-import java.time.LocalDateTime;
+import model.*;
 import java.util.*;
 
 
@@ -14,13 +9,14 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, Task> tasks = new HashMap<>();
     protected final Map<Integer, Epic> epics = new HashMap<>();
     protected final Map<Integer, Subtask> subtasks = new HashMap<>();
-    protected TreeMap<LocalDateTime,Task> sortedTasks = new TreeMap<>(); //sorted automatically
+    protected TreeSet<Task> sortedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime,Comparator.nullsLast(Comparator.naturalOrder())));
     protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
     public void addNewTask(Task task) {
         task.setTaskID(generateID());
         tasks.put(task.getTaskID(), task);
+        sortedTasks.add(task);
     }
 
     @Override
@@ -31,6 +27,7 @@ public class InMemoryTaskManager implements TaskManager {
             subtasks.put(subtask.getTaskID(), subtask);
             epics.get(epicID).getMySubtasksID().add(subtask.getTaskID());
             checkStatusOfEpic(epics.get(epicID));
+            sortedTasks.add(subtask);
         }
     }
 
@@ -38,13 +35,21 @@ public class InMemoryTaskManager implements TaskManager {
     public void addNewEpic(Epic epic) {
         epic.setTaskID(generateID());
         epics.put(epic.getTaskID(), epic);
+        sortedTasks.add(epic);// in the end order is irrelevant
+    }
+    @Override
+    public List<Task> getPrioritizedTasks(){
+        return new ArrayList<>(sortedTasks);
     }
 
     @Override
     public void checkStatusOfEpic(Epic epic) {
         boolean newTask = false;
         boolean done = false;
-        if(epic.getStartTime(subtasks).isPresent()){epic.setStartTime(epic.getStartTime(subtasks).get());}
+        if(epic.getStartTime(subtasks).isPresent()){
+            epic.setStartTime(epic.getStartTime(subtasks).get());
+            sortedTasks.add(epic);
+        }
         epic.setDuration(epic.getDuration(subtasks));
         if(epic.getEndTime()!=null){epic.setEndTime(epic.getEndTime());}
         if (!epic.getMySubtasksID().isEmpty()) {

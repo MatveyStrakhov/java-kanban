@@ -7,7 +7,9 @@ import java.io.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final String path;
@@ -251,15 +253,20 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         FileBackedTasksManager fileManager1 = (FileBackedTasksManager) Managers.getDefault();
         Task task0 = new Task("a", "a", TaskStatus.NEW,TaskType.TASK,LocalDateTime.now(),10);
+        TimeUnit.SECONDS.sleep(1);
         Task task1 = new Task("b", "b", TaskStatus.NEW,TaskType.TASK,LocalDateTime.now(),10);
+        TimeUnit.SECONDS.sleep(1);
         Epic epic2 = new Epic("c", "c");
         Epic epic3 = new Epic("d", "d");
         Subtask subtask4 = new Subtask("e", "e", 2, TaskStatus.NEW,LocalDateTime.now(),10);
-        Subtask subtask5 = new Subtask("e", "e", 2, TaskStatus.IN_PROGRESS,LocalDateTime.now(),10);
-        Subtask subtask6 = new Subtask("e", "e", 2, TaskStatus.NEW,LocalDateTime.now(),10);
+        TimeUnit.SECONDS.sleep(1);
+        Subtask subtask5 = new Subtask("f", "f", 2, TaskStatus.IN_PROGRESS,LocalDateTime.now(),10);
+        TimeUnit.SECONDS.sleep(1);
+        Subtask subtask6 = new Subtask("g", "g", 2, TaskStatus.NEW,LocalDateTime.now(),10);
+        TimeUnit.SECONDS.sleep(1);
         fileManager1.addNewTask(task0);
         fileManager1.addNewTask(task1);
         fileManager1.addNewEpic(epic2);
@@ -287,6 +294,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fileManager2.printAllEpics();
         fileManager2.printAllSubtasks();
         System.out.println(fileManager2.returnEpicByID(2).getStartTime());
+        System.out.println(fileManager1.getPrioritizedTasks());
 
     }
 
