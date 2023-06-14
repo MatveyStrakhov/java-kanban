@@ -5,6 +5,7 @@ import model.Subtask;
 import model.Task;
 import model.TaskStatus;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -13,6 +14,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, Task> tasks = new HashMap<>();
     protected final Map<Integer, Epic> epics = new HashMap<>();
     protected final Map<Integer, Subtask> subtasks = new HashMap<>();
+    protected TreeMap<LocalDateTime,Task> sortedTasks = new TreeMap<>(); //sorted automatically
     protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
@@ -42,6 +44,9 @@ public class InMemoryTaskManager implements TaskManager {
     public void checkStatusOfEpic(Epic epic) {
         boolean newTask = false;
         boolean done = false;
+        if(epic.getStartTime(subtasks).isPresent()){epic.setStartTime(epic.getStartTime(subtasks).get());}
+        epic.setDuration(epic.getDuration(subtasks));
+        if(epic.getEndTime()!=null){epic.setEndTime(epic.getEndTime());}
         if (!epic.getMySubtasksID().isEmpty()) {
             for (Integer subtaskID : epic.getMySubtasksID()) {
                 if (subtasks.get(subtaskID).getStatus().equals(TaskStatus.IN_PROGRESS)) {

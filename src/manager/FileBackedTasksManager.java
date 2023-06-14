@@ -4,6 +4,8 @@ import exception.ManagerSaveException;
 import model.*;
 
 import java.io.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +18,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private void save() throws ManagerSaveException {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
-            bw.write("id,type,name,status,description,epic");
+            bw.write("id,type,name,status,description,startTime,duration,epic");
             bw.newLine();
             for (Task task : tasks.values()) {
                 bw.write(taskToString(task));
@@ -44,12 +46,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private String taskToString(Task task) {
         return task.getTaskID() + "," + task.getTaskType().toString() + "," + task.getName() + ","
-                + task.getStatus() + "," + task.getDescription();
+                + task.getStatus() + "," + task.getDescription()+"," + task.getStartTime().format(task.getDateTimeFormatter())+"," + task.getDuration();
     }
 
     private String taskToString(Subtask task) {
         return task.getTaskID() + "," + task.getTaskType().toString() + "," + task.getName() + ","
-                + task.getStatus() + "," + task.getDescription() + "," + task.getEpicID();
+                + task.getStatus() + "," + task.getDescription()+"," + task.getStartTime().format(task.getDateTimeFormatter())+","
+                + task.getDuration().toString() + "," + task.getEpicID();
     }
 
     private String taskToString(Epic task) {
@@ -61,7 +64,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             epicIds.deleteCharAt(0);
 
         return task.getTaskID() + "," + task.getTaskType().toString() + "," + task.getName() + ","
-                + task.getStatus() + "," + task.getDescription() + "," + epicIds;
+                + task.getStatus() + "," + task.getDescription()+","+ epicIds;
     }
 
     private static Task fromString(String string) {
@@ -71,9 +74,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 Epic epic = new Epic(line[2], line[4]);
                 epic.setTaskID(Integer.parseInt(line[0]));
                 epic.setStatus(TaskStatus.valueOf(line[3]));
-                if (line.length > 5) {
+                if (line.length > 7) {
                     ArrayList<Integer> subtasksOfEpic = new ArrayList<>();
-                    String[] ids = line[5].split(":");
+                    String[] ids = line[7].split(":");
                     for (int i = 0; i < ids.length; i++) {
                         subtasksOfEpic.add(Integer.parseInt(ids[i]));
                     }
@@ -82,12 +85,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 return epic;
 
             case "SUBTASK":
-                Subtask subtask = new Subtask(line[2], line[4], Integer.parseInt(line[5]), TaskStatus.valueOf(line[3]));
+                Subtask subtask = new Subtask(line[2], line[4], Integer.parseInt(line[7]), TaskStatus.valueOf(line[3]));
                 subtask.setTaskID(Integer.parseInt(line[0]));
+                subtask.setStartTime(LocalDateTime.parse(line[5], subtask.getDateTimeFormatter()));
+                subtask.setDuration(Duration.parse(line[6]));
                 return subtask;
             case "TASK":
                 Task task = new Task(line[2], line[4], TaskStatus.valueOf(line[3]));
                 task.setTaskID(Integer.parseInt(line[0]));
+                task.setStartTime(LocalDateTime.parse(line[5], task.getDateTimeFormatter()));
+                task.setDuration(Duration.parse(line[6]));
                 return task;
             default:
                 return null;
@@ -99,7 +106,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try (BufferedReader bw = new BufferedReader(new FileReader(path))) {
             while (bw.ready()) {
                 String line = bw.readLine();
-                if (line.equals("id,type,name,status,description,epic")) {
+                if (line.equals("id,type,name,status,description,startTime,duration,epic")) {
                     continue;
                 }
                 if (!line.isBlank()) {
@@ -240,13 +247,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static void main(String[] args) {
         FileBackedTasksManager fileManager1 = (FileBackedTasksManager) Managers.getDefault();
-        Task task0 = new Task("a", "a", TaskStatus.NEW);
-        Task task1 = new Task("b", "b", TaskStatus.NEW);
+        Task task0 = new Task("a", "a", TaskStatus.NEW,TaskType.TASK,LocalDateTime.now(),10);
+        Task task1 = new Task("b", "b", TaskStatus.NEW,TaskType.TASK,LocalDateTime.now(),10);
         Epic epic2 = new Epic("c", "c");
         Epic epic3 = new Epic("d", "d");
-        Subtask subtask4 = new Subtask("e", "e", 2, TaskStatus.NEW);
-        Subtask subtask5 = new Subtask("e", "e", 2, TaskStatus.IN_PROGRESS);
-        Subtask subtask6 = new Subtask("e", "e", 2, TaskStatus.NEW);
+        Subtask subtask4 = new Subtask("e", "e", 2, TaskStatus.NEW,LocalDateTime.now(),10);
+        Subtask subtask5 = new Subtask("e", "e", 2, TaskStatus.IN_PROGRESS,LocalDateTime.now(),10);
+        Subtask subtask6 = new Subtask("e", "e", 2, TaskStatus.NEW,LocalDateTime.now(),10);
         fileManager1.addNewTask(task0);
         fileManager1.addNewTask(task1);
         fileManager1.addNewEpic(epic2);
@@ -263,7 +270,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fileManager1.printSubtaskByID(5);
         fileManager1.printSubtaskByID(6);
         fileManager1.printTaskByID(0);
-        fileManager1.removeEpicByID(3);
+        //fileManager1.removeEpicByID(3);
         System.out.println("history1:");
         fileManager1.printHistory();
         FileBackedTasksManager fileManager2 = loadFromFile("src/lastSessionSaved.csv");
@@ -273,6 +280,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fileManager2.printAllTasks();
         fileManager2.printAllEpics();
         fileManager2.printAllSubtasks();
+        System.out.println(fileManager2.returnEpicByID(2).getStartTime());
 
     }
 
