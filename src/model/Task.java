@@ -11,8 +11,8 @@ public class Task {
     protected TaskStatus status; // NEW IN_PROGRESS DONE;
     protected int taskID;
     protected TaskType type;
-    protected Duration duration;
-    protected LocalDateTime startTime;
+    protected Duration duration = null;
+    protected LocalDateTime startTime = null;
     protected DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy-HH:mm");
 
 
@@ -43,7 +43,7 @@ public class Task {
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status='" + status + '\'' +
-                ", taskID=" + taskID +
+                ", taskID=" + taskID  + '\'' + ", startTime=" + startTime + '\'' + ", duration=" + getDuration().toString()+
                 '}';
     }
 
@@ -94,7 +94,9 @@ public class Task {
         return description;
     }
     public LocalDateTime getEndTime(){
-        return startTime.plusMinutes(duration.toMinutes());
+        if(startTime!=null){
+        return startTime.plusMinutes(duration.toMinutes());}
+        else {return null;}
     }
 //    @Override
 //    public boolean equals(Object o) {

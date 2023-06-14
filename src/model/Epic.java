@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class Epic extends Task {
     private ArrayList<Integer> mySubtasksID = new ArrayList<>();
-    private LocalDateTime endTime;
+    private LocalDateTime endTime = null;
 
     public Epic(String name, String description) {
         super(name, description, TaskStatus.NEW,TaskType.EPIC);
@@ -23,7 +23,8 @@ public class Epic extends Task {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status='" + status + '\'' +
-                ", taskID=" + taskID +
+                ", taskID=" + taskID + '\'' + ", startTime=" + startTime + '\'' + ", duration=" + getDuration()+
+                 '\'' + ", endTime=" + getEndTime()+
                 '}';
     }
 

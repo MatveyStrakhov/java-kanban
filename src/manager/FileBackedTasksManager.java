@@ -25,11 +25,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 bw.newLine();
 
             }
-            for (Epic task : epics.values()) {
+
+            for (Subtask task : subtasks.values()) {
                 bw.write(taskToString(task));
                 bw.newLine();
             }
-            for (Subtask task : subtasks.values()) {
+            for (Epic task : epics.values()) {
                 bw.write(taskToString(task));
                 bw.newLine();
             }
@@ -74,9 +75,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 Epic epic = new Epic(line[2], line[4]);
                 epic.setTaskID(Integer.parseInt(line[0]));
                 epic.setStatus(TaskStatus.valueOf(line[3]));
-                if (line.length > 7) {
+                if (line.length > 5) {
                     ArrayList<Integer> subtasksOfEpic = new ArrayList<>();
-                    String[] ids = line[7].split(":");
+                    String[] ids = line[5].split(":");
                     for (int i = 0; i < ids.length; i++) {
                         subtasksOfEpic.add(Integer.parseInt(ids[i]));
                     }
@@ -114,6 +115,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     if (newTask != null) {
                         if (newTask.getTaskType().equals(TaskType.EPIC)) {
                             manager.epics.put(newTask.getTaskID(), (Epic) newTask);
+                            if(!((Epic) newTask).getMySubtasksID().isEmpty()){
+                            newTask.setStartTime(((Epic) newTask).getStartTime(manager.subtasks).get());
+                            newTask.setDuration(((Epic) newTask).getDuration(manager.subtasks));
+                            ((Epic) newTask).setEndTime(((Epic) newTask).getEndTime(manager.subtasks));
+                            }
                         } else if (newTask.getTaskType().equals(TaskType.TASK)) {
                             manager.tasks.put(newTask.getTaskID(), newTask);
                         } else if (newTask.getTaskType().equals(TaskType.SUBTASK)) {

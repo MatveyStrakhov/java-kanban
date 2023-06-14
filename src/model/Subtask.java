@@ -22,7 +22,7 @@ public class Subtask extends Task {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status='" + status + '\'' +
-                ", taskID=" + taskID +
+                ", taskID=" + taskID + '\'' + ", startTime=" + startTime + '\'' + ", duration=" + getDuration().toString()+
                 '}';
     }
 
