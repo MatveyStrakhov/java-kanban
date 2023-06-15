@@ -13,10 +13,11 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, Subtask> subtasks = new HashMap<>();
     //protected SortedSet<Task> sortedTasks = new TreeSet<Task>(Comparator.comparing(Task::getStartTime,Comparator.nullsLast(Comparator.naturalOrder())));
     protected final SortedSet<Task> sortedTasks = new TreeSet<>((o1, o2) -> {if (o1.getStartTime()!=null&&o2.getStartTime()!=null)
-        if (o1.getStartTime().equals(o2.getStartTime())) {
+        if (o1.getStartTime().equals(o2.getStartTime())&&!o1.getEndTime().equals(o2.getEndTime())) {
             return 1;
-        }else
-        return o1.getStartTime().compareTo(o2.getStartTime()); else if (o1.getStartTime()==null){return 1;}else{return-1;}});
+        }else if (o1.getStartTime().equals(o2.getStartTime())&&o1.getEndTime().equals(o2.getEndTime())){return 0;}
+        else{
+        return o1.getStartTime().compareTo(o2.getStartTime());} else if (o1.getStartTime()==null){return 1;}else{return-1;}});
     protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
