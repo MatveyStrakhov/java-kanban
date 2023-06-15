@@ -12,7 +12,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, Epic> epics = new HashMap<>();
     protected final Map<Integer, Subtask> subtasks = new HashMap<>();
     //protected SortedSet<Task> sortedTasks = new TreeSet<Task>(Comparator.comparing(Task::getStartTime,Comparator.nullsLast(Comparator.naturalOrder())));
-    protected SortedSet<Task> sortedTasks = new TreeSet<>((o1, o2) -> {if (o1.getStartTime()!=null&&o2.getStartTime()!=null)
+    protected final SortedSet<Task> sortedTasks = new TreeSet<>((o1, o2) -> {if (o1.getStartTime()!=null&&o2.getStartTime()!=null)
         if (o1.getStartTime().equals(o2.getStartTime())) {
             return 1;
         }else
@@ -112,6 +112,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeTaskByID(int taskID) {
         if (tasks.containsKey(taskID)) {
+            sortedTasks.remove(tasks.get(taskID));
             tasks.remove(taskID);
             historyManager.historyRemove(taskID);
         }
@@ -120,6 +121,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeEpicByID(int epicID) {
         if (epics.containsKey(epicID)) {
+            sortedTasks.remove(epics.get(epicID));
             epics.remove(epicID);
             historyManager.historyRemove(epicID);
             List<Integer> idForRemoval = new ArrayList<>();
@@ -130,6 +132,7 @@ public class InMemoryTaskManager implements TaskManager {
                 }
             }
             for (int id : idForRemoval) {
+                sortedTasks.remove(subtasks.get(id));
                 subtasks.remove(id);
             }
             idForRemoval.clear();
@@ -145,6 +148,7 @@ public class InMemoryTaskManager implements TaskManager {
                     epics.get(epicID).removeElementFromMySubtasksID(i);
                 }
             }
+            sortedTasks.remove(subtasks.get(subtaskID));
             subtasks.remove(subtaskID);
             historyManager.historyRemove(subtaskID);
             checkStatusOfEpic(epics.get(epicID));
@@ -157,15 +161,18 @@ public class InMemoryTaskManager implements TaskManager {
             historyManager.historyRemove(taskId);
         }
         tasks.clear();
+        sortedTasks.clear();
     }
 
     @Override
     public void removeAllEpics() {
         for(Integer taskId :subtasks.keySet()){
             historyManager.historyRemove(taskId);
+            sortedTasks.remove(subtasks.get(taskId));
         }
         for(Integer taskId :epics.keySet()){
             historyManager.historyRemove(taskId);
+            sortedTasks.remove(epics.get(taskId));
         }
         epics.clear();
         subtasks.clear();
@@ -175,6 +182,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeAllSubtasks() {
         for(Integer taskId :subtasks.keySet()){
             historyManager.historyRemove(taskId);
+            sortedTasks.remove(subtasks.get(taskId));
         }
         subtasks.clear();
         for (Epic epic : epics.values()) {
@@ -187,7 +195,9 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateTask(Task task, int taskID) {
         task.setTaskID(taskID);
         if (tasks.containsKey(taskID)) {
+            sortedTasks.remove(tasks.get(taskID));
             tasks.put(task.getTaskID(), task);
+            sortedTasks.add(task);
         }
     }
 
@@ -195,7 +205,9 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateSubtask(Subtask subtask, int subtaskID) {
         subtask.setTaskID(subtaskID);
         if (subtasks.containsKey(subtask.getTaskID())) {
+            sortedTasks.remove(subtasks.get(subtaskID));
             subtasks.put(subtask.getTaskID(), subtask);
+            sortedTasks.add(subtask);
             checkStatusOfEpic(epics.get(subtask.getEpicID()));
         }
     }
@@ -207,7 +219,9 @@ public class InMemoryTaskManager implements TaskManager {
             for (Integer subtaskID : epics.get(epic.getTaskID()).getMySubtasksID()) {
                 epic.getMySubtasksID().add(subtaskID);
             }
+            sortedTasks.remove(epics.get(epicID));
             epics.put(epic.getTaskID(), epic);
+            sortedTasks.add(epic);
             checkStatusOfEpic(epic);
         }
     }

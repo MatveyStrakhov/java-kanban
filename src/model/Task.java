@@ -13,7 +13,7 @@ public class Task {
     protected TaskType type;
     protected Duration duration = null;
     protected LocalDateTime startTime = null;
-    protected DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy-HH:mm");
+    protected DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy-HH:mm:ss");
 
 
     public Task(String name, String description, TaskStatus status, TaskType type) {
@@ -103,6 +103,10 @@ public class Task {
         } else {
             return null;
         }
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(taskID, name, description, status, type);
     }
 //    @Override
 //    public boolean equals(Object o) {

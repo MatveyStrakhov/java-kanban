@@ -122,10 +122,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                             newTask.setDuration(((Epic) newTask).getDuration(manager.subtasks));
                             ((Epic) newTask).setEndTime(((Epic) newTask).getEndTime(manager.subtasks));
                             }
+                            manager.sortedTasks.add(newTask);
                         } else if (newTask.getTaskType().equals(TaskType.TASK)) {
                             manager.tasks.put(newTask.getTaskID(), newTask);
+                            manager.sortedTasks.add(newTask);
                         } else if (newTask.getTaskType().equals(TaskType.SUBTASK)) {
                             manager.subtasks.put(newTask.getTaskID(), (Subtask) newTask);
+                            manager.sortedTasks.add(newTask);
                         }
                     }
                 } else {
@@ -255,6 +258,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static void main(String[] args) throws InterruptedException {
         FileBackedTasksManager fileManager1 = (FileBackedTasksManager) Managers.getDefault();
+        Task task9 = new Task("9", "update test", TaskStatus.NEW,TaskType.TASK,LocalDateTime.now(),10);
+        TimeUnit.SECONDS.sleep(1);
         Task task0 = new Task("a", "a", TaskStatus.NEW,TaskType.TASK,LocalDateTime.now(),10);
         TimeUnit.SECONDS.sleep(1);
         Task task1 = new Task("b", "b", TaskStatus.NEW,TaskType.TASK,LocalDateTime.now(),10);
@@ -294,6 +299,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fileManager2.printAllSubtasks();
         System.out.println(fileManager2.returnEpicByID(2).getStartTime());
         System.out.println(fileManager1.getPrioritizedTasks());
+        fileManager2.updateTask(task9,0);
+        System.out.println(fileManager2.getPrioritizedTasks());
 
     }
 
