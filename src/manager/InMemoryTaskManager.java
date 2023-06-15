@@ -1,8 +1,8 @@
 package manager;
 
+import exception.taskManagerException;
 import model.*;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -22,14 +22,15 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addNewTask(Task task) {
+        if(crossCheck(task)){
         task.setTaskID(generateID());
         tasks.put(task.getTaskID(), task);
-        sortedTasks.add(task);
+        sortedTasks.add(task);}
     }
 
     @Override
     public void addNewSubtask(Subtask subtask, int epicID) {
-        if (epics.containsKey(epicID)) {
+        if (epics.containsKey(epicID)&&crossCheck(subtask)) {
             subtask.setTaskID(generateID());
             subtask.setTaskID(subtask.getTaskID());
             subtasks.put(subtask.getTaskID(), subtask);
@@ -195,7 +196,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task, int taskID) {
         task.setTaskID(taskID);
-        if (tasks.containsKey(taskID)) {
+        if (tasks.containsKey(taskID)&&crossCheck(task)) {
             sortedTasks.remove(tasks.get(taskID));
             tasks.put(task.getTaskID(), task);
             sortedTasks.add(task);
@@ -205,7 +206,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubtask(Subtask subtask, int subtaskID) {
         subtask.setTaskID(subtaskID);
-        if (subtasks.containsKey(subtask.getTaskID())) {
+        if (subtasks.containsKey(subtask.getTaskID())&&crossCheck(subtask)) {
             sortedTasks.remove(subtasks.get(subtaskID));
             subtasks.put(subtask.getTaskID(), subtask);
             sortedTasks.add(subtask);
@@ -319,6 +320,20 @@ public class InMemoryTaskManager implements TaskManager {
         }
         else{
             return new ArrayList<>(subtasks.values());}
+    }
+    private boolean crossCheck(Task task){
+        if (task.getStartTime()==null||task.getEndTime()==null) {
+            throw new taskManagerException();
+        }
+        for(Task t :sortedTasks){
+            if(t.getEndTime()!=null&&t.getStartTime()!=null){
+            if (task.getStartTime().isAfter(t.getStartTime())&&task.getStartTime().isBefore(t.getEndTime())||
+            task.getEndTime().isAfter(t.getStartTime())&&task.getEndTime().isBefore(t.getEndTime())){
+                System.out.println("Tasks are crossing!");
+                return false;
+            }}
+        }
+        return true;
     }
 
 }

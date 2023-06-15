@@ -7,9 +7,9 @@ import java.io.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final String path;
@@ -256,21 +256,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         FileBackedTasksManager fileManager1 = (FileBackedTasksManager) Managers.getDefault();
-        Task task9 = new Task("9", "update test", TaskStatus.NEW,TaskType.TASK,LocalDateTime.now(),10);
-        TimeUnit.SECONDS.sleep(1);
-        Task task0 = new Task("a", "a", TaskStatus.NEW,TaskType.TASK,LocalDateTime.now(),10);
-        TimeUnit.SECONDS.sleep(1);
-        Task task1 = new Task("b", "b", TaskStatus.NEW,TaskType.TASK,LocalDateTime.now(),10);
-        TimeUnit.SECONDS.sleep(1);
+        Task task9 = new Task("9", "update test", TaskStatus.NEW,TaskType.TASK,LocalDateTime.of(2021,6,15,10,6,0),10);
+        Task task0 = new Task("a", "a", TaskStatus.NEW,TaskType.TASK,LocalDateTime.of(2021,6,15,11,6,0),10);
+        Task task1 = new Task("b", "b", TaskStatus.NEW,TaskType.TASK,LocalDateTime.of(2021,6,15,12,6,0),10);
         Epic epic2 = new Epic("c", "c");
         Epic epic3 = new Epic("d", "d");
-        Subtask subtask4 = new Subtask("e", "e", 2, TaskStatus.NEW,LocalDateTime.now(),10);
-        TimeUnit.SECONDS.sleep(1);
-        Subtask subtask5 = new Subtask("f", "f", 2, TaskStatus.IN_PROGRESS,LocalDateTime.now(),10);
-        TimeUnit.SECONDS.sleep(1);
-        Subtask subtask6 = new Subtask("g", "g", 2, TaskStatus.NEW,LocalDateTime.now(),10);
+        Subtask subtask4 = new Subtask("e", "e", 2, TaskStatus.NEW,LocalDateTime.of(2021,6,15,13,6,0),10);
+        Subtask subtask5 = new Subtask("f", "f", 2, TaskStatus.IN_PROGRESS,LocalDateTime.of(2021,6,15,14,6,0),10);
+        Subtask subtask6 = new Subtask("g", "g", 2, TaskStatus.NEW,LocalDateTime.of(2021,6,15,15,6,0),10);
         fileManager1.addNewTask(task0);
         fileManager1.addNewTask(task1);
         fileManager1.addNewEpic(epic2);
