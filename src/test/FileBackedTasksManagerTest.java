@@ -1,5 +1,6 @@
 package test;
 
+import exception.ManagerSaveException;
 import manager.FileBackedTasksManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,8 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 
 import static manager.FileBackedTasksManager.loadFromFile;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>{
     @BeforeEach
@@ -30,6 +30,10 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         assertEquals(Collections.emptyList(),prefilledTaskManager.returnAllSubtasks());
         assertNotEquals(Collections.emptyList(),prefilledTaskManager.returnAllEpics());
         assertEquals(1,prefilledTaskManager.getHistory().size());
+    }
+    @Test
+    void shouldThrowManagerSaveExceptionIfPathIsIncorrect(){
+        assertThrows(ManagerSaveException.class,()->loadFromFile(""));
     }
 
 }

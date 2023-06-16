@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -378,6 +379,22 @@ abstract class TaskManagerTest <T extends TaskManager>{
         taskManager.addNewSubtask(subtask1,epic.getTaskID());
         taskManager.checkStatusOfEpic(epic);
         assertEquals(epic.getStatus(),TaskStatus.IN_PROGRESS);
+    }
+    @Test
+    void shouldReturnEmptyPrioritizedTasks(){
+        List<Task> emptyList = Collections.emptyList();
+        assertEquals(emptyList,taskManager.getPrioritizedTasks());
+    }
+    @Test
+    void shouldReturnFilledPrioritizedList(){
+        List<Task> filledList = new ArrayList<>();
+        Task task0 = new Task("a", "a", TaskStatus.NEW,TaskType.TASK, LocalDateTime.of(2021,6,15,11,6,0),10);
+        Task task1 = new Task("b", "b", TaskStatus.NEW,TaskType.TASK,LocalDateTime.of(2021,6,15,12,6,0),10);
+        filledList.add(task0);
+        filledList.add(task1);
+        taskManager.addNewTask(task0);
+        taskManager.addNewTask(task1);
+        assertEquals(filledList,taskManager.getPrioritizedTasks());
     }
 
 
