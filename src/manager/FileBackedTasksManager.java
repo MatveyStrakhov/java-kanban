@@ -285,7 +285,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         //fileManager1.removeEpicByID(3);
         System.out.println("history1:");
         fileManager1.printHistory();
-        FileBackedTasksManager fileManager2 = loadFromFile("src/lastSessionSaved.csv");
+        FileBackedTasksManager fileManager2 = loadFromFile("resources//lastSessionSaved.csv");
         System.out.println("history2:");
         fileManager2.printHistory();
         System.out.println("all tasks:");

@@ -1,6 +1,5 @@
 package model;
 
-import manager.TaskManager;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -34,21 +33,20 @@ public class Epic extends Task {
 
     public LocalDateTime getEndTime(Map<Integer, Subtask> subtasks){
         if (!mySubtasksID.isEmpty()&&getStartTime(subtasks).isPresent()){
-        return getStartTime(subtasks).get().plus(getDuration(subtasks));}
+            endTime = getStartTime(subtasks).get().plus(getDuration(subtasks));
+            return endTime;}
         else {return null;}
     }
     public Duration getDuration(Map<Integer, Subtask> subtasks){
         Duration interval = Duration.ofMinutes(0);
-        if (mySubtasksID.isEmpty()){
-            return interval;
-        }
-        else{
-            for (Integer i : mySubtasksID){
+        if (!mySubtasksID.isEmpty()) {
+            for (Integer i : mySubtasksID) {
                 interval = interval.plusMinutes(subtasks.get(i).getDuration().toMinutes());
             }
-            return interval;
         }
-    }
+        return interval;
+        }
+
 
     public Optional<LocalDateTime> getStartTime(Map<Integer, Subtask> subtasks) {
         return mySubtasksID.stream().map((Integer i)->subtasks.get(i).getStartTime())

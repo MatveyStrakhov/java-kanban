@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HistoryManagerTest{
-    InMemoryHistoryManager historyManager;
+    HistoryManager historyManager;
     Task createNewTask() {
         return new Task("Test", "Test description", TaskStatus.NEW);
     }

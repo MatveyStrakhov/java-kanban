@@ -1,6 +1,5 @@
 package manager;
 
-import exception.taskManagerException;
 import model.*;
 
 import java.util.*;
@@ -30,22 +29,24 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addNewTask(Task task) {
+        task.setTaskID(generateID());
+        tasks.put(task.getTaskID(), task);
         if (crossCheck(task)) {
-            task.setTaskID(generateID());
-            tasks.put(task.getTaskID(), task);
             sortedTasks.add(task);
         }
     }
 
     @Override
     public void addNewSubtask(Subtask subtask, int epicID) {
-        if (epics.containsKey(epicID) && crossCheck(subtask)) {
+        if (epics.containsKey(epicID)) {
             subtask.setTaskID(generateID());
             subtask.setTaskID(subtask.getTaskID());
             subtasks.put(subtask.getTaskID(), subtask);
             epics.get(epicID).getMySubtasksID().add(subtask.getTaskID());
             checkStatusOfEpic(epics.get(epicID));
-            sortedTasks.add(subtask);
+            if (crossCheck(subtask)) {
+                sortedTasks.add(subtask);
+            }
         }
     }
 
@@ -208,20 +209,24 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task, int taskID) {
         task.setTaskID(taskID);
-        if (tasks.containsKey(taskID) && crossCheck(task)) {
+        if (tasks.containsKey(taskID)) {
             sortedTasks.remove(tasks.get(taskID));
             tasks.put(task.getTaskID(), task);
-            sortedTasks.add(task);
+            if (crossCheck(task)) {
+                sortedTasks.add(task);
+            }
         }
     }
 
     @Override
     public void updateSubtask(Subtask subtask, int subtaskID) {
         subtask.setTaskID(subtaskID);
-        if (subtasks.containsKey(subtask.getTaskID()) && crossCheck(subtask)) {
+        if (subtasks.containsKey(subtask.getTaskID())) {
             sortedTasks.remove(subtasks.get(subtaskID));
             subtasks.put(subtask.getTaskID(), subtask);
-            sortedTasks.add(subtask);
+            if (crossCheck(subtask)) {
+                sortedTasks.add(subtask);
+            }
             checkStatusOfEpic(epics.get(subtask.getEpicID()));
         }
     }
@@ -338,13 +343,13 @@ public class InMemoryTaskManager implements TaskManager {
 
     private boolean crossCheck(Task task) {
         if (task.getStartTime() == null || task.getEndTime() == null) {
-            throw new taskManagerException();
+            return true;
         }
         for (Task t : sortedTasks) {
             if (t.getEndTime() != null && t.getStartTime() != null) {
                 if (task.getStartTime().isAfter(t.getStartTime()) && task.getStartTime().isBefore(t.getEndTime()) ||
                         task.getEndTime().isAfter(t.getStartTime()) && task.getEndTime().isBefore(t.getEndTime())) {
-                    System.out.println("Tasks are crossing!");
+                    System.out.println("Tasks are crossing! Please update your task start time/duration!");
                     return false;
                 }
             }

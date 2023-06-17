@@ -15,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 abstract class TaskManagerTest <T extends TaskManager>{
     T taskManager;
-    Task createNewTask(TaskStatus status){
-        return new Task("Test", "Test description", status);
+    Task createNewTask(TaskStatus status, LocalDateTime startTime, int duration){
+        return new Task("Test", "Test description", status,TaskType.TASK, startTime,duration);
     }
-    Subtask createNewSubtask(int epicId,TaskStatus status){
-        return new Subtask("Test", "Test description", epicId, status);
+    Subtask createNewSubtask(int epicId,TaskStatus status, LocalDateTime startTime, int duration){
+        return new Subtask("Test", "Test description", epicId, status,startTime,duration);
     }
     Epic createNewEpic(){
         return new Epic("Test", "Test description");
@@ -27,7 +27,7 @@ abstract class TaskManagerTest <T extends TaskManager>{
 
    @Test
     void addNewTaskTest(){
-        Task task = new Task("Test", "Test description", TaskStatus.NEW);
+        Task task = new Task("Test", "Test description", TaskStatus.NEW,TaskType.TASK,LocalDateTime.now(),10);
         taskManager.addNewTask(task);
         final int taskId = task.getTaskID();
 
@@ -61,7 +61,7 @@ abstract class TaskManagerTest <T extends TaskManager>{
     }
     @Test
     void addNewSubtaskTest(){
-        Subtask task = createNewSubtask(0,TaskStatus.NEW);
+        Subtask task = createNewSubtask(0,TaskStatus.NEW,LocalDateTime.now(),10);
         Epic epic = createNewEpic();
         taskManager.addNewEpic(epic);
         taskManager.addNewSubtask(task,0);
@@ -80,7 +80,7 @@ abstract class TaskManagerTest <T extends TaskManager>{
     }
     @Test
     void shouldPrintAllTasks(){
-        Task task = createNewTask(TaskStatus.NEW);
+        Task task = createNewTask(TaskStatus.NEW,LocalDateTime.of(2021,6,15,11,6,0),10);
         taskManager.addNewTask(task);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
@@ -97,7 +97,7 @@ abstract class TaskManagerTest <T extends TaskManager>{
     @Test
     void shouldPrintAllSubtasks(){
         Epic epic = createNewEpic();
-        Subtask task = createNewSubtask(0,TaskStatus.NEW);
+        Subtask task = createNewSubtask(0,TaskStatus.NEW,LocalDateTime.of(2021,6,15,11,6,0),10);
         taskManager.addNewEpic(epic);
         taskManager.addNewSubtask(task,0);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -130,7 +130,7 @@ abstract class TaskManagerTest <T extends TaskManager>{
     }
     @Test
     void shouldReturnAllTasks(){
-        Task task = createNewTask(TaskStatus.NEW);
+        Task task = createNewTask(TaskStatus.NEW,LocalDateTime.of(2021,6,15,11,6,0),10);
         taskManager.addNewTask(task);
         List<Task> listOfOneTask = Collections.singletonList(task);
         assertEquals(listOfOneTask,taskManager.returnAllTasks());
@@ -144,7 +144,7 @@ abstract class TaskManagerTest <T extends TaskManager>{
     }
     @Test
     void shouldReturnAllSubtasks(){
-        Subtask task = createNewSubtask(0,TaskStatus.NEW);
+        Subtask task = createNewSubtask(0,TaskStatus.NEW,LocalDateTime.of(2021,6,15,11,6,0),10);
         Epic epic = createNewEpic();
         taskManager.addNewEpic(epic);
         taskManager.addNewSubtask(task,0);
@@ -160,7 +160,7 @@ abstract class TaskManagerTest <T extends TaskManager>{
     }
     @Test
     void shouldReturnNullAfterRemovingOneTask(){
-        Task task = createNewTask(TaskStatus.NEW);
+        Task task = createNewTask(TaskStatus.NEW,LocalDateTime.of(2021,6,15,11,6,0),10);
         taskManager.addNewTask(task);
         taskManager.removeTaskByID(0);
         assertNull(taskManager.returnTaskByID(0));
@@ -176,14 +176,14 @@ abstract class TaskManagerTest <T extends TaskManager>{
     void shouldReturnNullAfterRemovingOneSubtask(){
         Epic task = createNewEpic();
         taskManager.addNewEpic(task);
-        Subtask subtask = createNewSubtask(0,TaskStatus.NEW);
+        Subtask subtask = createNewSubtask(0,TaskStatus.NEW,LocalDateTime.of(2021,6,15,11,6,0),10);
         taskManager.addNewSubtask(subtask,0);
         taskManager.removeSubtaskByID(1);
         assertNull(taskManager.returnSubtaskByID(1));
     }
     @Test
     void shouldReturnNullAfterRemovingAllTasks(){
-        Task task = createNewTask(TaskStatus.NEW);
+        Task task = createNewTask(TaskStatus.NEW,LocalDateTime.of(2021,6,15,11,6,0),10);
         taskManager.addNewTask(task);
         taskManager.removeAllTasks();
         assertNull(taskManager.returnTaskByID(0));
@@ -199,15 +199,15 @@ abstract class TaskManagerTest <T extends TaskManager>{
     void shouldReturnNullAfterRemovingAllSubtasks(){
         Epic epic = createNewEpic();
         taskManager.addNewEpic(epic);
-        Subtask subtask = createNewSubtask(epic.getTaskID(), TaskStatus.NEW);
+        Subtask subtask = createNewSubtask(epic.getTaskID(), TaskStatus.NEW,LocalDateTime.of(2021,6,15,11,6,0),10);
         taskManager.addNewSubtask(subtask, epic.getTaskID());
         taskManager.removeAllSubtasks();
         assertNull(taskManager.returnSubtaskByID(subtask.getTaskID()));
     }
     @Test
     void shouldUpdateTask(){
-        Task task1 = createNewTask(TaskStatus.NEW);
-        Task task2 = createNewTask(TaskStatus.IN_PROGRESS);
+        Task task1 = createNewTask(TaskStatus.NEW,LocalDateTime.of(2021,6,15,11,6,0),10);
+        Task task2 = createNewTask(TaskStatus.IN_PROGRESS,LocalDateTime.of(2022,6,15,11,6,0),10);
         taskManager.addNewTask(task1);
         taskManager.updateTask(task2,task1.getTaskID());
         assertEquals(task2, taskManager.returnTaskByID(task1.getTaskID()));
@@ -223,8 +223,8 @@ abstract class TaskManagerTest <T extends TaskManager>{
     @Test
     void shouldUpdateSubtask(){
         Epic epic = createNewEpic();
-        Subtask subtask1 = createNewSubtask(0,TaskStatus.IN_PROGRESS);
-        Subtask subtask2 = createNewSubtask(0,TaskStatus.NEW);
+        Subtask subtask1 = createNewSubtask(0,TaskStatus.IN_PROGRESS,LocalDateTime.of(2021,6,15,11,6,0),10);
+        Subtask subtask2 = createNewSubtask(0,TaskStatus.NEW,LocalDateTime.of(2022,6,15,11,6,0),10);
         taskManager.addNewEpic(epic);
         taskManager.addNewSubtask(subtask1,0);
         taskManager.updateSubtask(subtask2, subtask1.getTaskID());
@@ -232,7 +232,7 @@ abstract class TaskManagerTest <T extends TaskManager>{
     }
     @Test
     void shouldReturnCorrectTask(){
-        Task task = createNewTask(TaskStatus.NEW);
+        Task task = createNewTask(TaskStatus.NEW,LocalDateTime.of(2021,6,15,11,6,0),10);
         taskManager.addNewTask(task);
         int taskId = task.getTaskID();
         assertEquals(task,taskManager.returnTaskByID(taskId));
@@ -247,7 +247,7 @@ abstract class TaskManagerTest <T extends TaskManager>{
     @Test
     void shouldReturnCorrectSubtask(){
         Epic epic = createNewEpic();
-        Subtask subtask = createNewSubtask(epic.getTaskID(),TaskStatus.NEW);
+        Subtask subtask = createNewSubtask(epic.getTaskID(),TaskStatus.NEW,LocalDateTime.of(2021,6,15,11,6,0),10);
         taskManager.addNewEpic(epic);
         taskManager.addNewSubtask(subtask,epic.getTaskID());
         int taskId = subtask.getTaskID();
@@ -261,12 +261,12 @@ abstract class TaskManagerTest <T extends TaskManager>{
     }
     @Test
     void shouldPrintTask(){
-        Task task = createNewTask(TaskStatus.NEW);
+        Task task = createNewTask(TaskStatus.NEW,LocalDateTime.of(2021,6,15,11,6,0),10);
         taskManager.addNewTask(task);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
         taskManager.printTaskByID(task.getTaskID());
-        assertEquals(task.toString()+"\r\n",out.toString());
+        assertEquals(task+"\r\n",out.toString());
     }
     @Test
     void shouldPrintNothingForTask(){
@@ -278,7 +278,7 @@ abstract class TaskManagerTest <T extends TaskManager>{
     @Test
     void shouldPrintSubtask(){
         Epic epic = createNewEpic();
-        Subtask task = createNewSubtask(0,TaskStatus.NEW);
+        Subtask task = createNewSubtask(0,TaskStatus.NEW,LocalDateTime.of(2021,6,15,11,6,0),10);
         taskManager.addNewEpic(epic);
         taskManager.addNewSubtask(task,0);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -311,7 +311,7 @@ abstract class TaskManagerTest <T extends TaskManager>{
     }
     @Test
     void shouldReturnCorrectHistory(){
-        Task task1 = createNewTask(TaskStatus.NEW);
+        Task task1 = createNewTask(TaskStatus.NEW,LocalDateTime.of(2021,6,15,11,6,0),10);
         taskManager.addNewTask(task1);
         Task task2 = taskManager.returnTaskByID(task1.getTaskID());
         List<Task> history = Collections.singletonList(task2);
@@ -319,14 +319,14 @@ abstract class TaskManagerTest <T extends TaskManager>{
     }
     @Test
     void shouldReturnEmptyHistory(){
-        Task task1 = createNewTask(TaskStatus.NEW);
+        Task task1 = createNewTask(TaskStatus.NEW,LocalDateTime.of(2021,6,15,11,6,0),10);
         taskManager.addNewTask(task1);
         List<Task> history = Collections.emptyList();
         assertEquals(history, taskManager.getHistory());
     }
     @Test
     void shouldPrintCorrectHistory(){
-        Task task1 = createNewTask(TaskStatus.NEW);
+        Task task1 = createNewTask(TaskStatus.NEW,LocalDateTime.of(2021,6,15,11,6,0),10);
         taskManager.addNewTask(task1);
         Task task2 = taskManager.returnTaskByID(task1.getTaskID());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -337,7 +337,7 @@ abstract class TaskManagerTest <T extends TaskManager>{
     }
     @Test
     void shouldPrintNothingIfHistoryIsAbsent(){
-        Task task1 = createNewTask(TaskStatus.NEW);
+        Task task1 = createNewTask(TaskStatus.NEW,LocalDateTime.of(2021,6,15,11,6,0),10);
         taskManager.addNewTask(task1);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
@@ -348,8 +348,8 @@ abstract class TaskManagerTest <T extends TaskManager>{
     void shouldPrintCorrectSubtasksByEpicID() {
         Epic epic = createNewEpic();
         taskManager.addNewEpic(epic);
-        Subtask subtask1 = createNewSubtask(epic.getTaskID(), TaskStatus.NEW);
-        Subtask subtask2 = createNewSubtask(epic.getTaskID(), TaskStatus.IN_PROGRESS);
+        Subtask subtask1 = createNewSubtask(epic.getTaskID(), TaskStatus.NEW,LocalDateTime.of(2021,6,15,11,6,0),10);
+        Subtask subtask2 = createNewSubtask(epic.getTaskID(), TaskStatus.IN_PROGRESS,LocalDateTime.of(2022,6,15,11,6,0),10);
         taskManager.addNewSubtask(subtask1,epic.getTaskID());
         taskManager.addNewSubtask(subtask2,epic.getTaskID());
         List<Task> subtasks = new ArrayList<>();
@@ -375,7 +375,7 @@ abstract class TaskManagerTest <T extends TaskManager>{
         Epic epic = createNewEpic();
         taskManager.addNewEpic(epic);
         assertEquals(epic.getStatus(),TaskStatus.NEW);
-        Subtask subtask1 = createNewSubtask(epic.getTaskID(), TaskStatus.IN_PROGRESS);
+        Subtask subtask1 = createNewSubtask(epic.getTaskID(), TaskStatus.IN_PROGRESS,LocalDateTime.of(2021,6,15,11,6,0),10);
         taskManager.addNewSubtask(subtask1,epic.getTaskID());
         taskManager.checkStatusOfEpic(epic);
         assertEquals(epic.getStatus(),TaskStatus.IN_PROGRESS);
