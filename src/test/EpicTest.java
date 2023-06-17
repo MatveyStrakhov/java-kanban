@@ -2,11 +2,9 @@ package test;
 
 
 import manager.InMemoryTaskManager;
-import manager.Managers;
 import manager.TaskManager;
 import model.*;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

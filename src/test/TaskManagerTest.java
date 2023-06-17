@@ -284,7 +284,7 @@ abstract class TaskManagerTest <T extends TaskManager>{
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
         taskManager.printSubtaskByID(task.getTaskID());
-        assertEquals(task.toString()+"\r\n",out.toString());
+        assertEquals(task+"\r\n",out.toString());
     }
     @Test
     void shouldPrintNothingForSubtask(){
@@ -300,7 +300,7 @@ abstract class TaskManagerTest <T extends TaskManager>{
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
         taskManager.printEpicByID(task.getTaskID());
-        assertEquals(task.toString()+"\r\n",out.toString());
+        assertEquals(task+"\r\n",out.toString());
     }
     @Test
     void shouldPrintNothingForEpic(){
