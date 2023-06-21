@@ -1,5 +1,6 @@
 package server;
 
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpsServer;
 import manager.FileBackedTasksManager;
@@ -18,16 +19,19 @@ public class HttpTaskServer {
     private final int PORT = 8080;
     private final HttpsServer tasksServer;
     private final TaskManager tasksManager;
+    private final Gson gson;
 
     public HttpTaskServer() throws IOException {
         tasksServer = HttpsServer.create(new InetSocketAddress(PORT),0);
         tasksManager = Managers.getDefault();
         tasksServer.createContext("/tasks/task/", this::tasksOperations);
+        gson = new Gson();
     }
     private void tasksOperations(HttpExchange exchange) throws IOException {
         if("GET".equals(exchange.getRequestMethod())&exchange.getRequestURI().toString().equals("/tasks/task/")){
             exchange.sendResponseHeaders(200,0);
-            JsonElement response = tasksManager.returnAllTasks();
+            String response = gson.toJson(tasksManager.returnAllTasks());
+            sendString(exchange,response);
         }
 
     }
@@ -40,6 +44,10 @@ public class HttpTaskServer {
         exchange.getResponseHeaders().add("Content-Type", "application/json");
         exchange.sendResponseHeaders(200, resp.length);
         exchange.getResponseBody().write(resp);
+    }
+
+    public static void main(String[] args) throws IOException {
+        HttpTaskServer taskServer = new HttpTaskServer();
     }
 
 
