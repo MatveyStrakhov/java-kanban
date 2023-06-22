@@ -138,7 +138,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void removeEpicByID(int epicID) {
+    public boolean removeEpicByID(int epicID) {
         if (epics.containsKey(epicID)) {
             sortedTasks.remove(epics.get(epicID));
             epics.remove(epicID);
@@ -155,7 +155,10 @@ public class InMemoryTaskManager implements TaskManager {
                 subtasks.remove(id);
             }
             idForRemoval.clear();
+            return true;
         }
+        else{
+        return false;}
     }
 
     @Override

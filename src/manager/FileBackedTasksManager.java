@@ -197,9 +197,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void removeEpicByID(int id) {
+    public boolean removeEpicByID(int id) {
         super.removeEpicByID(id);
         save();
+        return false;
     }
 
     @Override
