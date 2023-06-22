@@ -125,11 +125,15 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void removeTaskByID(int taskID) {
+    public boolean removeTaskByID(int taskID) {
         if (tasks.containsKey(taskID)) {
             sortedTasks.remove(tasks.get(taskID));
             tasks.remove(taskID);
             historyManager.historyRemove(taskID);
+            return true;
+        }
+        else {
+            return false;
         }
     }
 

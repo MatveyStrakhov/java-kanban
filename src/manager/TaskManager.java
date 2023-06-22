@@ -5,7 +5,6 @@ import model.Subtask;
 import model.Task;
 
 import java.util.List;
-import java.util.TreeSet;
 
 public interface TaskManager {
     void addNewTask(Task task); //done
@@ -23,7 +22,7 @@ public interface TaskManager {
     void printAllSubtasks(); //done
     void printSubtasksByEpicID(int epicID); //done
 
-    void removeTaskByID(int taskID); //done
+    boolean removeTaskByID(int taskID); //done
 
     void removeEpicByID(int epicID); //done
 

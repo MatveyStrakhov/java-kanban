@@ -49,12 +49,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private String taskToString(Task task) {
         return task.getTaskID() + "," + task.getTaskType().toString() + "," + task.getName() + ","
-                + task.getStatus() + "," + task.getDescription()+"," + task.getStartTime().format(task.getDateTimeFormatter())+"," + task.getDuration();
+                + task.getStatus() + "," + task.getDescription()+"," + task.getStartTime().format(Task.getDateTimeFormatter())+"," + task.getDuration().toString();
     }
 
     private String taskToString(Subtask task) {
         return task.getTaskID() + "," + task.getTaskType().toString() + "," + task.getName() + ","
-                + task.getStatus() + "," + task.getDescription()+"," + task.getStartTime().format(task.getDateTimeFormatter())+","
+                + task.getStatus() + "," + task.getDescription()+"," + task.getStartTime().format(Task.getDateTimeFormatter())+","
                 + task.getDuration().toString() + "," + task.getEpicID();
     }
 
@@ -90,13 +90,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             case "SUBTASK":
                 Subtask subtask = new Subtask(line[2], line[4], Integer.parseInt(line[7]), TaskStatus.valueOf(line[3]));
                 subtask.setTaskID(Integer.parseInt(line[0]));
-                subtask.setStartTime(LocalDateTime.parse(line[5], subtask.getDateTimeFormatter()));
+                subtask.setStartTime(LocalDateTime.parse(line[5], Task.getDateTimeFormatter()));
                 subtask.setDuration(Duration.parse(line[6]));
                 return subtask;
             case "TASK":
                 Task task = new Task(line[2], line[4], TaskStatus.valueOf(line[3]));
                 task.setTaskID(Integer.parseInt(line[0]));
-                task.setStartTime(LocalDateTime.parse(line[5], task.getDateTimeFormatter()));
+                task.setStartTime(LocalDateTime.parse(line[5], Task.getDateTimeFormatter()));
                 task.setDuration(Duration.parse(line[6]));
                 return task;
             default:
@@ -184,9 +184,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void removeTaskByID(int id) {
+    public boolean removeTaskByID(int id) {
         super.removeTaskByID(id);
         save();
+        return false;
     }
 
     @Override
