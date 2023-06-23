@@ -162,7 +162,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void removeSubtaskByID(int subtaskID) {
+    public boolean removeSubtaskByID(int subtaskID) {
         if (subtasks.containsKey(subtaskID)) {
             int epicID = subtasks.get(subtaskID).getEpicID();
             for (int i = 0; i < epics.get(epicID).getMySubtasksID().size(); i++) {
@@ -174,6 +174,10 @@ public class InMemoryTaskManager implements TaskManager {
             subtasks.remove(subtaskID);
             historyManager.historyRemove(subtaskID);
             checkStatusOfEpic(epics.get(epicID));
+            return true;
+        }
+        else{
+            return false;
         }
     }
 

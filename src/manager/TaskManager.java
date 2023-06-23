@@ -26,7 +26,7 @@ public interface TaskManager {
 
     boolean removeEpicByID(int epicID); //done
 
-    void removeSubtaskByID(int subtaskID); //done
+    boolean removeSubtaskByID(int subtaskID); //done
 
     void removeAllTasks();//done
 

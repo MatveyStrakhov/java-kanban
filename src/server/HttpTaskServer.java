@@ -38,6 +38,9 @@ public class HttpTaskServer {
                 .setPrettyPrinting().create();
         tasksServer.createContext("/tasks/task", this::tasksOperations);
         tasksServer.createContext("/epics/epic", this::epicsOperations);
+        tasksServer.createContext("/subtasks/subtask", this::subtasksOperations);
+        tasksServer.createContext("/tasks/history", this::historyOperations);
+        tasksServer.createContext("/tasks/", this::prioritizedTasksOperations);
     }
 
     private void tasksOperations(HttpExchange exchange) throws IOException {
@@ -94,7 +97,7 @@ public class HttpTaskServer {
         }
         else if ("GET".equals(exchange.getRequestMethod())&path[2].startsWith("epic?id=")){
             int taskId = Integer.parseInt(path[path.length-1].substring(8));
-            String response = gson.toJson(tasksManager.returnEpicByID(taskId),Task.class);
+            String response = gson.toJson(tasksManager.returnEpicByID(taskId),Epic.class);
             sendJson(exchange,response,200);
         }
         else if ("POST".equals(exchange.getRequestMethod())&exchange.getRequestURI().toString().endsWith("epics/epic")){
@@ -130,6 +133,70 @@ public class HttpTaskServer {
             sendString(exchange, "unknown request",404);
         }
 
+    }
+    private void subtasksOperations(HttpExchange exchange) throws IOException {
+        String[] path = exchange.getRequestURI().toString().split("/");
+        if("GET".equals(exchange.getRequestMethod())&exchange.getRequestURI().toString().endsWith("subtasks/subtask")){
+            String response = gson.toJson(tasksManager.returnAllSubtasks());
+            sendJson(exchange,response,200);
+        }
+        else if ("GET".equals(exchange.getRequestMethod())&path[2].startsWith("subtask?id=")){
+            int taskId = Integer.parseInt(path[path.length-1].substring(11));
+            String response = gson.toJson(tasksManager.returnSubtaskByID(taskId),Subtask.class);
+            sendJson(exchange,response,200);
+        }
+        else if ("POST".equals(exchange.getRequestMethod())&exchange.getRequestURI().toString().endsWith("subtasks/subtask")){
+            try{
+                String request = readString(exchange);
+                JsonElement jsonRequest = JsonParser.parseString(request);
+                JsonElement iD = jsonRequest.getAsJsonObject().get("taskID");
+                JsonElement epicID = jsonRequest.getAsJsonObject().get("epicID");
+                if (iD.isJsonNull()){
+                    Subtask newTask = gson.fromJson(request, Subtask.class);
+                    tasksManager.addNewSubtask(newTask,epicID.getAsInt());
+                    sendJson(exchange,"subtask added",200);}
+                else{
+                    Subtask newTask = gson.fromJson(request,Subtask.class);
+                    tasksManager.updateSubtask(newTask, iD.getAsInt());
+                    sendString(exchange,"subtask updated",200);
+                }
+            }
+            catch(JsonParseException e){
+                sendString(exchange,"error json",404);
+            }
+        } else if ("DELETE".equals(exchange.getRequestMethod())&path[2].startsWith("subtask?id=")) {
+            int taskId = Integer.parseInt(path[path.length-1].substring(11));
+            boolean isDeleted = tasksManager.removeSubtaskByID(taskId);
+            if (isDeleted) {
+                sendString(exchange, "subtask deleted", 200);
+            } else {
+                sendString(exchange, "not found", 404);
+            }
+        } else if ("DELETE".equals(exchange.getRequestMethod())&exchange.getRequestURI().toString().endsWith("subtasks/subtask")) {
+            tasksManager.removeAllSubtasks();
+            sendString(exchange, "subtasks cleared", 200);
+        } else{
+            sendString(exchange, "unknown request",404);
+        }
+
+    }
+    private void historyOperations(HttpExchange exchange) throws IOException {
+        if("GET".equals(exchange.getRequestMethod())&exchange.getRequestURI().toString().endsWith("/tasks/history")){
+            String response = gson.toJson(tasksManager.getHistory());
+            sendJson(exchange,response,200);
+        }
+        else{
+            sendString(exchange, "unknown request",404);
+        }
+    }
+    private void prioritizedTasksOperations(HttpExchange exchange) throws IOException {
+        if("GET".equals(exchange.getRequestMethod())&exchange.getRequestURI().toString().endsWith("/tasks/")){
+            String response = gson.toJson(tasksManager.getPrioritizedTasks());
+            sendJson(exchange,response,200);
+        }
+        else{
+            sendString(exchange, "unknown request",404);
+        }
     }
     protected String readString(HttpExchange exchange) throws IOException {
         return new String(exchange.getRequestBody().readAllBytes(), UTF_8);

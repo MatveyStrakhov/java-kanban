@@ -117,10 +117,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     if (newTask != null) {
                         if (newTask.getTaskType().equals(TaskType.EPIC)) {
                             manager.epics.put(newTask.getTaskID(), (Epic) newTask);
-                            if(!((Epic) newTask).getMySubtasksID().isEmpty()){
+                            if(!((Epic) newTask).getMySubtasksID().isEmpty()&((Epic)newTask).getStartTime(manager.subtasks).isPresent()){
                             newTask.setStartTime(((Epic) newTask).getStartTime(manager.subtasks).get());
                             newTask.setDuration(((Epic) newTask).getDuration(manager.subtasks));
                             ((Epic) newTask).setEndTime(((Epic) newTask).getEndTime(manager.subtasks));
+                            }
+                            else{
+                                newTask.setStartTime(null);
+                                newTask.setDuration(null);
+                                ((Epic) newTask).setEndTime(null);
                             }
                             manager.sortedTasks.add(newTask);
                         } else if (newTask.getTaskType().equals(TaskType.TASK)) {
@@ -185,22 +190,30 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     @Override
     public boolean removeTaskByID(int id) {
-        super.removeTaskByID(id);
-        save();
-        return false;
+        if(super.removeTaskByID(id)){
+            save();
+            return true;
+        }
+        else {return false;}
+
+
     }
 
     @Override
-    public void removeSubtaskByID(int id) {
-        super.removeSubtaskByID(id);
+    public boolean removeSubtaskByID(int id) {
+        if(super.removeSubtaskByID(id)){
         save();
+        return true;}
+        else{return false;}
+
     }
 
     @Override
     public boolean removeEpicByID(int id) {
-        super.removeEpicByID(id);
+        if(super.removeEpicByID(id)){
         save();
-        return false;
+        return true;}
+        else{return false;}
     }
 
     @Override
@@ -287,6 +300,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         //fileManager1.removeEpicByID(3);
         System.out.println("history1:");
         fileManager1.printHistory();
+        //fileManager1.removeAllSubtasks();
         FileBackedTasksManager fileManager2 = loadFromFile("resources//lastSessionSaved.csv");
         System.out.println("history2:");
         fileManager2.printHistory();
