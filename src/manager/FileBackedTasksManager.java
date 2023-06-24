@@ -272,49 +272,4 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         save();
     }
 
-
-    public static void main(String[] args) {
-        FileBackedTasksManager fileManager1 = (FileBackedTasksManager) Managers.getDefault();
-        Task task9 = new Task("9", "update test", TaskStatus.NEW,TaskType.TASK,LocalDateTime.of(2021,6,15,10,6,0),10);
-        Task task0 = new Task("a", "a", TaskStatus.NEW,TaskType.TASK,LocalDateTime.of(2021,6,15,11,6,0),10);
-        Task task1 = new Task("b", "b", TaskStatus.NEW,TaskType.TASK,LocalDateTime.of(2021,6,15,12,6,0),10);
-        Epic epic2 = new Epic("c", "c");
-        Epic epic3 = new Epic("d", "d");
-        Subtask subtask4 = new Subtask("e", "e", 2, TaskStatus.NEW,LocalDateTime.of(2021,6,15,13,6,0),10);
-        Subtask subtask5 = new Subtask("f", "f", 2, TaskStatus.IN_PROGRESS,LocalDateTime.of(2021,6,15,14,6,0),10);
-        Subtask subtask6 = new Subtask("g", "g", 2, TaskStatus.NEW,LocalDateTime.of(2021,6,15,15,6,0),10);
-        fileManager1.addNewTask(task0);
-        fileManager1.addNewTask(task1);
-        fileManager1.addNewEpic(epic2);
-        fileManager1.addNewEpic(epic3);
-        fileManager1.addNewSubtask(subtask4, 2);
-        fileManager1.addNewSubtask(subtask5, 2);
-        fileManager1.addNewSubtask(subtask6, 2);
-        System.out.println("Поехали!");
-        fileManager1.printTaskByID(0);
-        fileManager1.printTaskByID(1);
-        fileManager1.printEpicByID(2);
-        fileManager1.printEpicByID(3);
-        fileManager1.printSubtaskByID(4);
-        fileManager1.printSubtaskByID(5);
-        fileManager1.printSubtaskByID(6);
-        fileManager1.printTaskByID(0);
-        //fileManager1.removeEpicByID(3);
-        System.out.println("history1:");
-        fileManager1.printHistory();
-        //fileManager1.removeAllSubtasks();
-        FileBackedTasksManager fileManager2 = loadFromFile("resources//lastSessionSaved.csv");
-        System.out.println("history2:");
-        fileManager2.printHistory();
-        System.out.println("all tasks:");
-        fileManager2.printAllTasks();
-        fileManager2.printAllEpics();
-        fileManager2.printAllSubtasks();
-        System.out.println(fileManager2.returnEpicByID(2).getStartTime());
-        System.out.println(fileManager1.getPrioritizedTasks());
-        fileManager2.updateTask(task9,0);
-        System.out.println(fileManager2.getPrioritizedTasks());
-
-    }
-
 }

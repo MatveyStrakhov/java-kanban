@@ -17,8 +17,7 @@ public class KVTaskClient {
         try{
             URI uri = URI.create(url + "/register");
             HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
-            String response = client.send(request, HttpResponse.BodyHandlers.ofString()).body();
-            this.API_TOKEN = response;
+            this.API_TOKEN = client.send(request, HttpResponse.BodyHandlers.ofString()).body();
         }
         catch(IOException | InterruptedException e){
             System.out.println("error while starting server possibly wrong url");
@@ -35,21 +34,5 @@ public class KVTaskClient {
         HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         return response.body();
-    }
-
-
-
- public void printAPITOCKEN(){
-      System.out.println(API_TOKEN);
-   }
-
-    public static void main(String[] args) throws IOException, InterruptedException {
-        KVTaskClient client = new KVTaskClient("http://localhost:8078");
-        client.printAPITOCKEN();
-        client.put("test","test");
-        if(client.get("t").isEmpty()){
-            System.out.println(1);
-        }
-        System.out.println(client.get("t"));
     }
 }

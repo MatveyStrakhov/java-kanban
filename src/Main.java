@@ -1,5 +1,3 @@
-import manager.FileBackedTasksManager;
-import manager.InMemoryTaskManager;
 import manager.Managers;
 import manager.TaskManager;
 import model.*;
@@ -22,7 +20,7 @@ public class Main {
         Subtask subtask5 = new Subtask("f", "f", 2, TaskStatus.IN_PROGRESS,LocalDateTime.of(2021,6,15,14,6,0),10);
         Subtask subtask6 = new Subtask("g", "g", 2, TaskStatus.NEW,LocalDateTime.of(2021,6,15,15,6,0),10);
         TaskManager taskManager = Managers.getDefault();
-        System.out.println(taskManager.equals(null));
+        assert taskManager != null;
         taskManager.addNewTask(task0);
         taskManager.addNewTask(task1);
         taskManager.addNewEpic(epic2);
@@ -40,5 +38,6 @@ public class Main {
         System.out.println("deleted epic");
         taskManager.removeEpicByID(3);
         taskManager.printAllEpics();
+        kvServer.stop();
     }
 }
