@@ -24,13 +24,13 @@ public class KVTaskClient {
             System.out.println("error while starting server possibly wrong url");
         }
     }
-    void put(String key,String json) throws IOException, InterruptedException {
+    public void put(String key,String json) throws IOException, InterruptedException {
         URI uri = URI.create(url + "/save/" +key+ "?API_TOKEN=" + API_TOKEN);
         final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
         HttpRequest request = HttpRequest.newBuilder().uri(uri).POST(body).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
     }
-    String get(String key) throws IOException, InterruptedException {
+    public String get(String key) throws IOException, InterruptedException {
         URI uri = URI.create(url + "/load/" +key+ "?API_TOKEN=" + API_TOKEN);
         HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -47,6 +47,9 @@ public class KVTaskClient {
         KVTaskClient client = new KVTaskClient("http://localhost:8078");
         client.printAPITOCKEN();
         client.put("test","test");
-        System.out.println(client.get("test"));
+        if(client.get("t").isEmpty()){
+            System.out.println(1);
+        }
+        System.out.println(client.get("t"));
     }
 }

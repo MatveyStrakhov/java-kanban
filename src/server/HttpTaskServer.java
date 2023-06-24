@@ -31,8 +31,8 @@ public class HttpTaskServer {
 
     public HttpTaskServer() throws IOException {
         tasksServer = HttpServer.create(new InetSocketAddress(PORT),0);
-        //tasksManager = Managers.getDefault();
-        tasksManager = FileBackedTasksManager.loadFromFile("resources/lastSessionSaved.csv");
+        tasksManager = Managers.getDefault();
+        //tasksManager = FileBackedTasksManager.loadFromFile("resources/lastSessionSaved.csv");
         gson = new GsonBuilder().serializeNulls()
         .registerTypeAdapter(LocalDateTime.class, adapter.nullSafe())
                 .setPrettyPrinting().create();

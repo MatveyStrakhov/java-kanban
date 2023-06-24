@@ -27,7 +27,6 @@ public class KVServer {
     }
 
     private void load(HttpExchange h) throws IOException {
-        // TODO Добавьте получение значения по ключу
         System.out.println("\n/load");
         try{
             if (!hasAuth(h)) {

@@ -12,13 +12,15 @@ import java.util.List;
 
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private final String path;
+    private String path;
 
     public FileBackedTasksManager(String path) {
         this.path = path;
     }
+    public FileBackedTasksManager() {
+    }
 
-    private void save() throws ManagerSaveException {
+    protected void save() throws ManagerSaveException {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
             bw.write("id,type,name,status,description,startTime,duration,epic");
             bw.newLine();
@@ -43,7 +45,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private static String historyToString(HistoryManager manager) {
+    protected static String historyToString(HistoryManager manager) {
         return manager.toString();
     }
 
@@ -70,7 +72,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 + task.getStatus() + "," + task.getDescription()+","+ epicIds;
     }
 
-    private static Task fromString(String string) {
+    protected static Task fromString(String string) {
         String[] line = string.split(",");
         switch (line[1]) {
             case "EPIC":
