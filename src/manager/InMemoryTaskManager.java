@@ -61,6 +61,15 @@ public class InMemoryTaskManager implements TaskManager {
     public List<Task> getPrioritizedTasks() {
         return new ArrayList<>(sortedTasks);
     }
+    public String getPrioritizedTasksOrder(){
+        StringBuilder prioTasks = new StringBuilder();
+        for(Task task:getPrioritizedTasks()){
+            prioTasks.append(",").append(task.getTaskID());
+        }
+        if(prioTasks.length()!=0){
+            prioTasks.deleteCharAt(0);}
+        return prioTasks.toString();
+    }
 
     @Override
     public void checkStatusOfEpic(Epic epic) {

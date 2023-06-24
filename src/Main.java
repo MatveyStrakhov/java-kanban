@@ -11,7 +11,6 @@ public class Main {
     public static void main(String[] args) throws IOException {
         KVServer kvServer = new KVServer();
         kvServer.start();
-        Task task9 = new Task("9", "update test", TaskStatus.NEW,TaskType.TASK, LocalDateTime.of(2021,6,15,10,6,0),10);
         Task task0 = new Task("a", "a", TaskStatus.NEW,TaskType.TASK,LocalDateTime.of(2021,6,15,11,6,0),10);
         Task task1 = new Task("b", "b", TaskStatus.NEW,TaskType.TASK,LocalDateTime.of(2021,6,15,12,6,0),10);
         Epic epic2 = new Epic("c", "c");
@@ -38,6 +37,13 @@ public class Main {
         System.out.println("deleted epic");
         taskManager.removeEpicByID(3);
         taskManager.printAllEpics();
+        System.out.println(taskManager.getPrioritizedTasks());
+        TaskManager taskManager1 = Managers.getDefault();
+        assert taskManager1 != null;
+        taskManager1.printAllTasks();
+        taskManager1.printAllSubtasks();
+        taskManager1.printAllEpics();
+        System.out.println(taskManager1.getPrioritizedTasks());
         kvServer.stop();
     }
 }

@@ -8,10 +8,6 @@ import model.Epic;
 import model.LocalDateTimeAdapter;
 import model.Subtask;
 import model.Task;
-import server.HttpTaskServer;
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -51,9 +47,9 @@ public class HttpTaskManager extends FileBackedTasksManager{
             }
             if(!historyToString(historyManager).isEmpty()){
             client.put("history", historyToString(historyManager));}
-//            if(!getPrioritizedTasks().isEmpty()) {
-//                client.put("prioritizedTasks", String.valueOf(getPrioritizedTasks()));
-//            }
+            if(!getPrioritizedTasks().isEmpty()) {
+                client.put("prioritizedTasks", getPrioritizedTasksOrder());
+            }
         } catch (InterruptedException|IOException e) {
             throw new ManagerSaveException("Error while saving");
         }
@@ -74,6 +70,7 @@ public class HttpTaskManager extends FileBackedTasksManager{
                 Subtask newTask = gson.fromJson(response, Subtask.class);
                 subtasks.put(i,newTask);
             }
+            i++;
         }
         if(!client.get("history").isEmpty()){
             String[] history = client.get("history").split(",");
@@ -90,8 +87,8 @@ public class HttpTaskManager extends FileBackedTasksManager{
                 }
             }
         }
-        if(!client.get("prioritizedTasks").isEmpty()){
-            String[] sorted = client.get("history").split(",");
+        if(!client.get("prioritizedTasks").isEmpty()&!(client.get("prioritizedTasks").contentEquals("[]"))){
+            String[] sorted = client.get("prioritizedTasks").split(",");
             List<Integer> taskIds = Arrays.stream(sorted).map(Integer::parseInt).collect(Collectors.toList());
             for(int taskID:taskIds){
                 if(tasks.containsKey(taskID)){
