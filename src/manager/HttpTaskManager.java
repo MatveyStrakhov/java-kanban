@@ -58,7 +58,7 @@ public class HttpTaskManager extends FileBackedTasksManager{
         int i = 0;
         while(!client.get(String.valueOf(i)).isEmpty()){
             String response = client.get(String.valueOf(i));
-            if(response.contains("TASK")){
+            if(response.contains("TASK")&!response.contains("SUB")){
                 Task newTask = gson.fromJson(response, Task.class);
                 tasks.put(i,newTask);
             }
