@@ -3,39 +3,29 @@ package server;
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-import manager.FileBackedTasksManager;
 import manager.Managers;
 import manager.TaskManager;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import model.Epic;
+import model.Subtask;
+import model.Task;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-
-import model.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class HttpTaskServer {
     private final int PORT = 8080;
-    private final HttpServer tasksServer;
+    private static HttpServer tasksServer;
     private final TaskManager tasksManager;
     private final Gson gson;
-    private static final LocalDateTimeAdapter adapter = new LocalDateTimeAdapter();
+
 
 
     public HttpTaskServer() throws IOException {
         tasksServer = HttpServer.create(new InetSocketAddress(PORT),0);
         tasksManager = Managers.getDefault();
-        //tasksManager = FileBackedTasksManager.loadFromFile("resources/lastSessionSaved.csv");
-        gson = new GsonBuilder().serializeNulls()
-        .registerTypeAdapter(LocalDateTime.class, adapter.nullSafe())
-                .setPrettyPrinting().create();
+        gson = Managers.getDefaultGson();
         tasksServer.createContext("/tasks/task", this::tasksOperations);
         tasksServer.createContext("/epics/epic", this::epicsOperations);
         tasksServer.createContext("/subtasks/subtask", this::subtasksOperations);
@@ -219,6 +209,9 @@ public class HttpTaskServer {
         System.out.println("Запускаем сервер на порту " + PORT);
         System.out.println("Открой в браузере http://localhost:" + PORT + "/");
         tasksServer.start();
+    }
+    public static void stop(){
+        tasksServer.stop(1);
     }
 
     public static void main(String[] args) throws IOException {

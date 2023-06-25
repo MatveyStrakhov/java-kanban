@@ -15,7 +15,7 @@ import com.sun.net.httpserver.HttpServer;
 public class KVServer {
     public static final int PORT = 8078;
     private final String apiToken;
-    private final HttpServer server;
+    private static HttpServer server;
     private final Map<String, String> data = new HashMap<>();
 
     public KVServer() throws IOException {
@@ -115,8 +115,8 @@ public class KVServer {
         System.out.println("API_TOKEN: " + apiToken);
         server.start();
     }
-    public void stop(){
-        server.stop(1);
+    public static void stop(){
+        server.stop(0);
     }
 
     private String generateApiToken() {

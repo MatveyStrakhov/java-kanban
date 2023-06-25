@@ -19,7 +19,6 @@ public class Main {
         Subtask subtask5 = new Subtask("f", "f", 2, TaskStatus.IN_PROGRESS,LocalDateTime.of(2021,6,15,14,6,0),10);
         Subtask subtask6 = new Subtask("g", "g", 2, TaskStatus.NEW,LocalDateTime.of(2021,6,15,15,6,0),10);
         TaskManager taskManager = Managers.getDefault();
-        assert taskManager != null;
         taskManager.addNewTask(task0);
         taskManager.addNewTask(task1);
         taskManager.addNewEpic(epic2);
@@ -39,7 +38,6 @@ public class Main {
         taskManager.printAllEpics();
         System.out.println(taskManager.getPrioritizedTasks());
         TaskManager taskManager1 = Managers.getDefault();
-        assert taskManager1 != null;
         taskManager1.printAllTasks();
         taskManager1.printAllSubtasks();
         taskManager1.printAllEpics();
