@@ -2,10 +2,8 @@ package manager;
 
 import client.KVTaskClient;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import exception.ManagerSaveException;
 import model.Epic;
-import model.LocalDateTimeAdapter;
 import model.Subtask;
 import model.Task;
 import java.io.IOException;
@@ -99,105 +97,4 @@ public class HttpTaskManager extends FileBackedTasksManager{
         }
 
     }
-
-//    @Override
-//    public void addNewSubtask(Subtask subtask, int epicId) {
-//        super.addNewSubtask(subtask, epicId);
-//        save();
-//    }
-//
-//    @Override
-//    public void addNewTask(Task task) {
-//        super.addNewTask(task);
-//        save();
-//    }
-//
-//    @Override
-//    public void addNewEpic(Epic task) {
-//        super.addNewEpic(task);
-//        save();
-//    }
-//
-//    @Override
-//    public boolean removeTaskByID(int id) {
-//        if(super.removeTaskByID(id)){
-//            save();
-//            return true;
-//        }
-//        else {return false;}
-//
-//
-//    }
-//
-//    @Override
-//    public boolean removeSubtaskByID(int id) {
-//        if(super.removeSubtaskByID(id)){
-//            save();
-//            return true;}
-//        else{return false;}
-//
-//    }
-//
-//    @Override
-//    public boolean removeEpicByID(int id) {
-//        if(super.removeEpicByID(id)){
-//            save();
-//            return true;}
-//        else{return false;}
-//    }
-//
-//    @Override
-//    public void printTaskByID(int id) {
-//        super.printTaskByID(id);
-//        save();
-//    }
-//
-//    @Override
-//    public void printSubtaskByID(int id) {
-//        super.printSubtaskByID(id);
-//        save();
-//    }
-//
-//    @Override
-//    public void printEpicByID(int id) {
-//        super.printEpicByID(id);
-//        save();
-//    }
-//
-//    @Override
-//    public void updateTask(Task task, int id) {
-//        super.updateTask(task, id);
-//        save();
-//    }
-//
-//    @Override
-//    public void updateEpic(Epic task, int id) {
-//        super.updateEpic(task, id);
-//        save();
-//    }
-//
-//    @Override
-//    public void updateSubtask(Subtask task, int id) {
-//        super.updateSubtask(task, id);
-//        save();
-//    }
-//
-//    @Override
-//    public void removeAllSubtasks() {
-//        super.removeAllSubtasks();
-//        save();
-//    }
-//
-//    @Override
-//    public void removeAllTasks() {
-//        super.removeAllTasks();
-//        save();
-//    }
-//
-//    @Override
-//    public void removeAllEpics() {
-//        super.removeAllEpics();
-//        save();
-//    }
-
 }

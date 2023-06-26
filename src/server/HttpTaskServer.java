@@ -3,6 +3,7 @@ package server;
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import manager.HttpTaskManager;
 import manager.Managers;
 import manager.TaskManager;
 import model.Epic;
@@ -17,7 +18,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class HttpTaskServer {
     private final int PORT = 8080;
     private static HttpServer tasksServer;
-    private final TaskManager tasksManager;
+    public final TaskManager tasksManager;
     private final Gson gson;
 
 
@@ -49,7 +50,7 @@ public class HttpTaskServer {
                 String request = readString(exchange);
                 JsonElement jsonRequest = JsonParser.parseString(request);
                 JsonElement iD = jsonRequest.getAsJsonObject().get("taskID");
-                if (iD.isJsonNull()){
+                if (iD.isJsonNull()|iD.getAsInt()==-1){
                 Task newTask = gson.fromJson(request,Task.class);
                 tasksManager.addNewTask(newTask);
                 System.out.println(tasksManager.returnAllTasks().toString());
@@ -95,7 +96,7 @@ public class HttpTaskServer {
                 String request = readString(exchange);
                 JsonElement jsonRequest = JsonParser.parseString(request);
                 JsonElement iD = jsonRequest.getAsJsonObject().get("taskID");
-                if (iD.isJsonNull()){
+                if (iD.isJsonNull()|iD.getAsInt()==-1){
                     Epic newTask = gson.fromJson(request, Epic.class);
                     tasksManager.addNewEpic(newTask);
                     sendJson(exchange,"epic added",200);}
@@ -141,7 +142,7 @@ public class HttpTaskServer {
                 JsonElement jsonRequest = JsonParser.parseString(request);
                 JsonElement iD = jsonRequest.getAsJsonObject().get("taskID");
                 JsonElement epicID = jsonRequest.getAsJsonObject().get("epicID");
-                if (iD.isJsonNull()){
+                if (iD.isJsonNull()|iD.getAsInt()==-1){
                     Subtask newTask = gson.fromJson(request, Subtask.class);
                     tasksManager.addNewSubtask(newTask,epicID.getAsInt());
                     sendJson(exchange,"subtask added",200);}

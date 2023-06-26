@@ -365,6 +365,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (task.getStartTime() == null || task.getEndTime() == null) {
             return true;
         }
+        if(!sortedTasks.isEmpty()){
         for (Task t : sortedTasks) {
             if (t.getEndTime() != null && t.getStartTime() != null) {
                 if (task.getStartTime().isAfter(t.getStartTime()) && task.getStartTime().isBefore(t.getEndTime()) ||
@@ -373,8 +374,7 @@ public class InMemoryTaskManager implements TaskManager {
                     return false;
                 }
             }
-        }
+        }}
         return true;
     }
-
 }

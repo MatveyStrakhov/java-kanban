@@ -42,6 +42,6 @@ public class Main {
         taskManager1.printAllSubtasks();
         taskManager1.printAllEpics();
         System.out.println(taskManager1.getPrioritizedTasks());
-        kvServer.stop();
+        KVServer.stop();
     }
 }

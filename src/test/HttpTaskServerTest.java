@@ -2,7 +2,6 @@ package test;
 
 import com.google.gson.Gson;
 import manager.Managers;
-import manager.TaskManager;
 import model.*;
 import org.junit.jupiter.api.*;
 import server.HttpTaskServer;
@@ -14,36 +13,35 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class HttpTaskServerTest {
-    static KVServer KVserver;
-    HttpTaskServer taskServer;
-    static Task task;
-    static Epic epic;
-    static Subtask subtask;
-    static Gson gson;
-    static TaskManager taskManager;
+      KVServer KVserver;
+      HttpTaskServer taskServer;
+      Task task;
+      Epic epic;
+      Subtask subtask;
+      Gson gson;
     @BeforeAll
-    static void beforeAll() throws IOException {
-        task = new Task("a", "a", TaskStatus.NEW, TaskType.TASK, LocalDateTime.of(2021,6,15,11,6,0),10);
+     void beforeAll() throws IOException {
+        task = new Task("a", "a", TaskStatus.NEW, TaskType.TASK, LocalDateTime.of(2020,6,15,11,6,0),10);
         epic = new Epic("c", "c");
         subtask = new Subtask("e", "e", 1, TaskStatus.NEW,LocalDateTime.of(2021,6,15,13,6,0),10);
         gson = Managers.getDefaultGson();
         KVserver = new KVServer();
         KVserver.start();
-        taskManager = Managers.getDefault();
-        taskManager.addNewTask(task);
-        taskManager.addNewEpic(epic);
-        taskManager.addNewSubtask(subtask,1);
     }
     @BeforeEach
     void beforeEach() throws IOException {
         taskServer = new HttpTaskServer();
         taskServer.start();
-
+        taskServer.tasksManager.addNewTask(task);
+        taskServer.tasksManager.addNewEpic(epic);
+        taskServer.tasksManager.addNewSubtask(subtask,1);
     }
     @AfterEach
     void afterEach(){
@@ -83,7 +81,7 @@ public class HttpTaskServerTest {
         HttpRequest request = HttpRequest.newBuilder().GET().uri(uri).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
-        assertEquals(gson.toJson(taskManager.returnEpicByID(1),Epic.class),response.body());
+        assertEquals(gson.toJson(epic,Epic.class),response.body());
 
     }
     @Test
@@ -94,7 +92,7 @@ public class HttpTaskServerTest {
         HttpRequest request = HttpRequest.newBuilder().GET().uri(uri).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
-        assertEquals(gson.toJson(List.of(taskManager.returnEpicByID(1))),response.body());
+        assertEquals(gson.toJson(List.of(epic)),response.body());
 
     }
     @Test
@@ -156,11 +154,11 @@ public class HttpTaskServerTest {
     @Test
     @Order(10)
     void shouldReturn200forDELETEEpic() throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        URI uri = URI.create("http://localhost:8080/epics/epic?id=1");
-        HttpRequest request = HttpRequest.newBuilder().DELETE().uri(uri).build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals(200, response.statusCode());
+        HttpClient client1 = HttpClient.newHttpClient();
+        URI uri1 = URI.create("http://localhost:8080/epics/epic?id=1");
+        HttpRequest request1 = HttpRequest.newBuilder().DELETE().uri(uri1).build();
+        HttpResponse<String> response1 = client1.send(request1, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response1.statusCode());
     }
     @Test
     @Order(11)
@@ -190,7 +188,7 @@ public class HttpTaskServerTest {
         assertEquals(200, response.statusCode());
     }
     @Test
-    @Order(0)
+    @Order(-3)
     void shouldReturn200forDELETESubtask() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         URI uri = URI.create("http://localhost:8080/subtasks/subtask?id=2");
@@ -199,7 +197,7 @@ public class HttpTaskServerTest {
         assertEquals(200, response.statusCode());
     }
     @Test
-    @Order(14)
+    @Order(15)
     void shouldReturn200forDELETEAllSubtasks() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         URI uri = URI.create("http://localhost:8080/subtasks/subtask");
@@ -215,7 +213,7 @@ public class HttpTaskServerTest {
         HttpRequest request = HttpRequest.newBuilder().GET().uri(uri).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
-        assertEquals(gson.toJson(taskManager.getHistory()),response.body());
+        assertEquals(gson.toJson(Collections.emptyList()),response.body());
 
     }
     @Test
@@ -226,7 +224,7 @@ public class HttpTaskServerTest {
         HttpRequest request = HttpRequest.newBuilder().GET().uri(uri).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
-        assertEquals(gson.toJson(taskManager.getPrioritizedTasks()),response.body());
+        assertEquals(gson.toJson(taskServer.tasksManager.getPrioritizedTasks()),response.body());
 
     }
 

@@ -24,7 +24,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager>{
     }
     @AfterEach
     void afterEach(){
-        server.stop();
+        KVServer.stop();
     }
     @Test
     void shouldLoadNoTasksFromEmptyServer(){
